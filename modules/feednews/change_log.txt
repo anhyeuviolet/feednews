@@ -1,0 +1,15 @@
+Feednews - Lấy tin tự động cho hệ thống nukeviet
+
+[Feednews v3.3.01]
+1. Cho phép lấy tin về module ảo của news
+2. Nén và xử lý dữ liệu lấy về, nâng cao khả năng bảo mật với CSDL
+3. Thêm tùy chọn lưu theo nhóm tin
+4. Khắc phục tình trạng tràn bộ nhớ
+5. Lấy random thời gian đăng bài từ 60 -> 1000 giây trước khi bắt đầu lấy tin
+6. Tự động thêm keywords
+7. Chọn nguồn tin
+8. Cho phép khai báo mẫu trong phần cấu trúc theo kiểu lấy đối tượng con.
+	vd: - mẫu{nth} sẽ lấy nội dung đối tượng con có vị trí là nth ngay sau của mẫu
+		- mẫu{p-nth} sẽ lấy nội dung đối tượng con là thẻ <p>, có vị trí là nth ngay sau của mẫu
+9. Xóa comments trong trang nguồn trước khi phân tích mẫu
+10. Thông báo tổng số tin lấy được và các lỗi sau khi lấy tin.
