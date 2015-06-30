@@ -16,7 +16,16 @@ $xtpl->assign( 'NV_NAME_VARIABLE', NV_NAME_VARIABLE );
 $xtpl->assign( 'NV_OP_VARIABLE', NV_OP_VARIABLE );
 $xtpl->assign( 'MODULE_NAME', $module_name );
 $xtpl->assign( 'OP', $op );
-$xtpl->parse( 'main' );
+
+$xtpl->assign( 'BUTTON', array(
+	'add' => NV_BASE_ADMINURL . 'index.php?' . NV_LANG_VARIABLE . '=' . NV_LANG_DATA . '&amp;' . NV_NAME_VARIABLE . '=' . $module_name . '&amp;' . NV_OP_VARIABLE . '=add_site_structure',
+	'copy' => NV_BASE_ADMINURL . 'index.php?' . NV_LANG_VARIABLE . '=' . NV_LANG_DATA . '&amp;' . NV_NAME_VARIABLE . '=' . $module_name . '&amp;' . NV_OP_VARIABLE . '=copy_site_structure',
+	'edit' => NV_BASE_ADMINURL . 'index.php?' . NV_LANG_VARIABLE . '=' . NV_LANG_DATA . '&amp;' . NV_NAME_VARIABLE . '=' . $module_name . '&amp;' . NV_OP_VARIABLE . '=edit_site_structure',
+	'temp' => NV_BASE_ADMINURL . 'index.php?' . NV_LANG_VARIABLE . '=' . NV_LANG_DATA . '&amp;' . NV_NAME_VARIABLE . '=' . $module_name . '&amp;' . NV_OP_VARIABLE . '=temp_site_structure',
+) );
+
+
+
 $page_title = $lang_module['main'];
 $__site=NV_PREFIXLANG . "_" . $module_name . "_site";
 $__site_structure=NV_PREFIXLANG . "_" . $module_name . "_site_structure";
@@ -412,49 +421,24 @@ if($cmd=='feed' and $temps = $nv_Request->get_typed_array( 'temps', 'post', '' )
 		//die();
 	}
 }
+if($total){
+	$xtpl->assign( 'TOTAL', $total );
+	$xtpl->parse( 'main.complete' );
+}
+if($error){
+	$xtpl->assign( 'ERROR', $error );
+	$xtpl->parse( 'main.error' );
+}
 
-if($total) $contents .= "<div class=\"alert alert-info\"><strong>Thông báo</strong>: đã lấy được <strong>".$total."</strong> tin!</div><div class=\"clear\"></div>";
-if($error) $contents .= "<div class=\"alert alert-danger\"><strong>Error</strong>: <blockquote class=\"error\">" . $error . "</blockquote></div><div class=\"clear\"></div>";
-$contents .= '<form name="feedForm" method="post">
-	<div>
-		<button type="button" class="btn btn-success" onclick="feedNews();">Lấy tin</button>
-		<a href="'.NV_BASE_ADMINURL.'index.php?'.NV_NAME_VARIABLE.'='.$module_name.'&'.NV_OP_VARIABLE.'=add_site_structure" style="color:#000;"><button type="button" class="btn btn-primary">Thêm mẫu</button></a>
-		<button type="button" class="btn btn-danger" onclick="deletePattern();">Xóa mẫu</button>
-        <div class="table-responsive" style="margin-top: 10px">
-			<table class="table table-striped table-bordered table-hover">
-        	<tr bgcolor="#f2f2f2">
-				<th style="padding:5px;">#</th>
-            	<th style="padding:5px;">Mẫu lấy tin</th>
-            	<th style="padding:5px;">Chèn vào danh mục</th>
-            	<th style="padding:5px;">Trạng thái bài</th>
-				<th style="padding:5px;" nowrap width="1%" align="center">Hành động</th>
-            </tr>';
-			while( $row = $site_id->fetch() )
-			{
-				$contents.='<tr>
-				<td style="padding:5px;" width="1%" align="center"><input name="temps['.$row['id'].']" value="'.$row['id'].'" class="selected_ids temps-item" type="checkbox" id="temps['.$row['id'].']" /></td>
-                <td style="padding:5px;"><label for="temps['.$row['id'].']"><strong>'.$row['name'].'</strong></label>[ <a href="'.$row['url'].'" target="_blank" title="'.$row['url'].'">link</a> ]</td>
-                <td style="padding:5px;">'.$row['cat_title'].' - '.$row['table_name'].'</td>
-                <td style="padding:5px;">'.$status[$row['status']].'</td>
-				<td style="padding:5px;" align="center" nowrap width="1%">
-					<a href="'.NV_BASE_ADMINURL .'index.php?'.NV_NAME_VARIABLE.'='.$module_name.'&'.NV_OP_VARIABLE.'=edit_site_structure&id='.$row['id'].'">Sửa</a> |
-					<a href="'.NV_BASE_ADMINURL .'index.php?'.NV_NAME_VARIABLE.'='.$module_name.'&'.NV_OP_VARIABLE.'=temp_site_structure&id='.$row['id'].'">Cấu trúc</a> |
-					<a href="'.NV_BASE_ADMINURL .'index.php?'.NV_NAME_VARIABLE.'='.$module_name.'&'.NV_OP_VARIABLE.'=copy_site_structure&id='.$row['id'].'">Nhân bản</a>
-				</td>
-            	</tr>';
-			}
-		$contents .= '
-        </table>
-        </div>
-		<button type="button" class="btn btn-success" onclick="feedNews();">Lấy tin</button>
-		<a href="'.NV_BASE_ADMINURL.'index.php?'.NV_NAME_VARIABLE.'='.$module_name.'&'.NV_OP_VARIABLE.'=add_site_structure" style="color:#000;"><button type="button" class="btn btn-primary">Thêm mẫu</button></a>
-		<button type="button" class="btn btn-danger" onclick="deletePattern();">Xóa mẫu</button>
-	</div>
-    <input type="hidden" name="cmd" value="feed" id="cmd" />
-    </form>';
+	while( $row = $site_id->fetch() )
+	{
+		$row['status'] = $status[$row['status']];
+		$xtpl->assign( 'ROW', $row );
+		$xtpl->parse( 'main.list_pattern' );
+	}
 
+$xtpl->parse( 'main' );
+$contents = $xtpl->text( 'main' );
 include ( NV_ROOTDIR . "/includes/header.php" );
 echo nv_admin_theme( $contents );
 include ( NV_ROOTDIR . "/includes/footer.php" );
-
-?>
