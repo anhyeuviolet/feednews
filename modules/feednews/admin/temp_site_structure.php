@@ -16,14 +16,20 @@ $xtpl->assign( 'NV_NAME_VARIABLE', NV_NAME_VARIABLE );
 $xtpl->assign( 'NV_OP_VARIABLE', NV_OP_VARIABLE );
 $xtpl->assign( 'MODULE_NAME', $module_name );
 $xtpl->assign( 'OP', $op );
-$xtpl->parse( 'main' );
+
+$xtpl->assign( 'BUTTON', array(
+	'add' => NV_BASE_ADMINURL . 'index.php?' . NV_LANG_VARIABLE . '=' . NV_LANG_DATA . '&amp;' . NV_NAME_VARIABLE . '=' . $module_name . '&amp;' . NV_OP_VARIABLE . '=add_site_structure',
+	'copy' => NV_BASE_ADMINURL . 'index.php?' . NV_LANG_VARIABLE . '=' . NV_LANG_DATA . '&amp;' . NV_NAME_VARIABLE . '=' . $module_name . '&amp;' . NV_OP_VARIABLE . '=copy_site_structure',
+	'edit' => NV_BASE_ADMINURL . 'index.php?' . NV_LANG_VARIABLE . '=' . NV_LANG_DATA . '&amp;' . NV_NAME_VARIABLE . '=' . $module_name . '&amp;' . NV_OP_VARIABLE . '=edit_site_structure',
+	'temp' => NV_BASE_ADMINURL . 'index.php?' . NV_LANG_VARIABLE . '=' . NV_LANG_DATA . '&amp;' . NV_NAME_VARIABLE . '=' . $module_name . '&amp;' . NV_OP_VARIABLE . '=temp_site_structure',
+) );
 
 $__site=NV_PREFIXLANG . "_" . $module_name . "_site";
 $__site_structure=NV_PREFIXLANG . "_" . $module_name . "_site_structure";
 
 $id=$nv_Request ->get_int('id','post,get');
 
-$query = "SELECT * FROM ".$__site." WHERE id=".$id;
+$query = "SELECT * FROM ".$__site." WHERE id=".intval($id);
 $edit_id=$db->query( $query );
 $item=$edit_id->fetch();
 
@@ -31,12 +37,9 @@ $page_title = $lang_module['temp_site_structure']." - ".$item['name'];
 $error="";
 
 if($item){
-	//$site_structure=$db->sql_fetch_assoc ( $temp_id );
-	//debug($site_structure);
 	$cmd = $nv_Request->isset_request( 'cmd', 'post' );
 	if($cmd){
 		// submit
-		//debug($_REQUEST);
 		if($structure=$_REQUEST['field']){
 			// xóa toàn bộ site_structure có site_id=$edit_id
 			$query="DELETE FROM ".$__site_structure." WHERE site_id=".$item['id'];
@@ -49,10 +52,10 @@ if($item){
 				}
 			}
 		}
-		Header( "Location: " . NV_BASE_ADMINURL . "index.php?" . NV_NAME_VARIABLE . "=" . $module_name );
+		Header( "Location: " . NV_BASE_ADMINURL . 'index.php?' . NV_LANG_VARIABLE . '=' . NV_LANG_DATA . '&' . NV_NAME_VARIABLE . '=' . $module_name . '&' . NV_OP_VARIABLE . '=temp_site_structure&id='.$item['id'] );
 		die();
 	}
-	
+
 	$query = "SELECT * FROM ".$__site_structure." WHERE site_id=".$item['id'];
 	$temp_id=$db->query( $query );
 	$temp=array();
@@ -61,43 +64,24 @@ if($item){
 		$temp[$row['field_name']]=$row;
 	}
 
-	//debug($temp);
 	$field=array('title','hometext','bodyhtml','homeimgalt','author');
-	
-	$contents .= '<form name="EditDeclarationSite" id="EditDeclarationSite" method="post">
-		<button type="submit" class="btn btn-success">Ghi lại</button>
-		<a href="'.NV_BASE_ADMINURL.'index.php?'.NV_NAME_VARIABLE.'='.$module_name.'&'.NV_OP_VARIABLE.'=edit_site_structure&id='.$item['id'].'" style="color:#000;"><button type="button" class="btn btn-primary">Sửa mẫu</button></a>
-		<a href="'.NV_BASE_ADMINURL.'index.php?'.NV_NAME_VARIABLE.'='.$module_name.'" style="color:#000;"><button type="button" class="btn btn-primary">Danh sách</button></a>
-		<a href="'.NV_BASE_ADMINURL.'index.php?'.NV_NAME_VARIABLE.'='.$module_name.'&'.NV_OP_VARIABLE.'=add_site_structure" style="color:#000;"><button type="button" class="btn btn-primary">Thêm mẫu</button></a>
-	<div class="table-responsive" style="margin-top: 10px">
-		<table class="table table-striped table-bordered table-hover">
-            <tr bgcolor="#f2f2f2">
-                <th style="padding:5px;">Trường dữ liệu</th>
-                <th style="padding:5px; width:30%;">Mẫu cần lấy</th>
-                <th style="padding:5px; width:30%;">Mẫu đối tượng cần xóa (cách nhau bởi dấu phẩy ",")</th>
-                <th style="padding:5px; width:30%;">Chuỗi ký tự cần xóa (cách nhau bởi dấu phẩy ",")</th>
-            </tr>';
 	for($i=0;$i<sizeof($field);$i++){
-		$contents .= '<tr>
-				<td style="padding:2px;">'.$field[$i].'</td>
-				<td style="padding:2px;"><input name="field['.$field[$i].'][extra]" type="text" id="field['.$field[$i].'][extra]" style="width:99%;" value=\''.((isset($temp[$field[$i]]['extra']) and $temp[$field[$i]]['extra'])?$temp[$field[$i]]['extra']:'').'\' /></td>
-				<td style="padding:2px;"><input name="field['.$field[$i].'][element_delete]" type="text" id="field['.$field[$i].'][element_delete]" style="width:99%;" value=\''.((isset($temp[$field[$i]]['element_delete']) and $temp[$field[$i]]['element_delete'])?$temp[$field[$i]]['element_delete']:'').'\' /></td>
-				<td style="padding:2px;"><input name="field['.$field[$i].'][string_delete]" type="text" id="field['.$field[$i].'][string_delete]" style="width:99%;" value=\''.((isset($temp[$field[$i]]['string_delete']) and $temp[$field[$i]]['string_delete'])?$temp[$field[$i]]['string_delete']:'').'\' /></td>
-			</tr>';
+		$xtpl->assign( 'TEMP', array(
+			'extra' => ((isset($temp[$field[$i]]['extra']) and $temp[$field[$i]]['extra'])?$temp[$field[$i]]['extra']:''),
+			'element_delete' => ((isset($temp[$field[$i]]['element_delete']) and $temp[$field[$i]]['element_delete'])?$temp[$field[$i]]['element_delete']:''),
+			'string_delete' => ((isset($temp[$field[$i]]['string_delete']) and $temp[$field[$i]]['string_delete'])?$temp[$field[$i]]['string_delete']:''),
+		) );
+		$xtpl->assign('FIELD',$field[$i]);
+		$xtpl->parse( 'main.field_list' );
 	}
-	$contents .= '</table></div>
-	<input type="hidden" name="cmd" id="cmd" value="1" /></form>';
-}else{
-	$contents .= "   
-		<div class=\"quote\" style=\"width: 780px;\">        
-			<blockquote class=\"error\"><span style=\"font-size:16px\">Không tồn tại mẫu này</span>        
-			</blockquote></div><div class=\"clear\">
-		</div>";
+	$xtpl->assign('ITEM',$item);
+}else
+{
+	$contents = $error;
 }
 
-
+$xtpl->parse( 'main' );
+$contents = $xtpl->text( 'main' );
 include ( NV_ROOTDIR . "/includes/header.php" );
 echo nv_admin_theme( $contents );
 include ( NV_ROOTDIR . "/includes/footer.php" );
-
-?>

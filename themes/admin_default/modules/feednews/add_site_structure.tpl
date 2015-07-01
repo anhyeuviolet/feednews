@@ -50,10 +50,12 @@
             </tr>
 			<tr>
 				<td style="padding:2px;"><label>Trạng thái tin bài</label></td>
-				<td style="padding:2px;"><select name="status" id="status" class="form-control w200">
-				<option value="0">Chờ duyệt</option>
-				<option value="1" selected="selected">Đăng bài ngay</option>
-				</select></td>
+				<td style="padding:2px;">
+					<select name="status" id="status" class="form-control w200">
+					<option value="0">Chờ duyệt</option>
+					<option value="1" selected="selected">Đăng bài ngay</option>
+					</select>
+				</td>
 			</tr>
 			<tr>
 				<td style="padding:2px;"><label>Lấy ảnh đại diện về host</label></td>
@@ -85,7 +87,7 @@
 				<td style="padding:2px;"><label>Nhóm tin</label></td>
 				<td style="padding:2px;">
 				<!-- BEGIN: list_bid -->
-					<input name="{BID.id}" type="checkbox" id="{BID.id}" value="{BID.id}" /> <label for="{BID.id}">{BID.title}</label>
+					<input name="bid[]" type="checkbox" id="{BID.bid}" value="{BID.bid}" /> <label for="{BID.bid}">{BID.title}</label>
 				<!-- END: list_bid -->
 				</td>
 				</tr>

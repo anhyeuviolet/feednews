@@ -4,17 +4,19 @@
 <!-- END: error -->
 <form name="EditDeclarationSite" id="EditDeclarationSite" method="post">
 	<input type="hidden" name="cmd" value="1" id="cmd" />
-		<button type="submit" class="btn btn-success">Ghi lại</button>
-		<a href=".NV_BASE_ADMINURL.index.php?.NV_NAME_VARIABLE.=.$module_name.&.NV_OP_VARIABLE.=temp_site_structure&id={ITEM.id}" style="color:#000;"><button type="button" class="btn btn-primary">Cấu trúc</button></a>
-		<a href=".NV_BASE_ADMINURL.index.php?.NV_NAME_VARIABLE.=.$module_name." style="color:#000;"><button type="button" class="btn btn-primary">Danh sách</button></a>
-		<a href=".NV_BASE_ADMINURL.index.php?.NV_NAME_VARIABLE.=.$module_name.&.NV_OP_VARIABLE.=add_site_structure" style="color:#000;"><button class="btn btn-primary" type="button">Thêm mẫu</button></a>
-		<span style="float:right; font-weight:700;">Mục có dấu (<span class="require">*</span>) là bắt buộc</span>
-		
+	<button type="submit" class="btn btn-success">Ghi lại</button>
+	<a href="{BUTTON.temp}&id={ITEM.id}" style="color:#000;"><button type="button" class="btn btn-primary">Cấu trúc</button></a>
+	<a href="{NV_BASE_ADMINURL}index.php?{NV_NAME_VARIABLE}={MODULE_NAME}" style="color:#000;"><button type="button" class="btn btn-primary">Danh sách</button></a>
+	<a href="{BUTTON.add}" style="color:#000;"><button class="btn btn-primary" type="button">Thêm mẫu</button></a>
+	<span style="float:right; font-weight:700;">Mục có dấu (<span class="require">*</span>) là bắt buộc</span>
+
 	<div class="table-responsive" style="margin-top: 10px">
 		<table class="table table-striped table-bordered table-hover">
 		<tr><td style="padding:2px;"><label>Module lưu tin</label></td><td>
 		<select class="form-control w200" name="module" id="module" onchange="window.location={NV_BASE_ADMINURL}index.php?{NV_NAME_VARIABLE}={MODULE_NAME}&{NV_OP_VARIABLE}={OP}&id={ITEM.id}&table_name=+this.value">
-		<option " . $select1 . " value=" . $rows[module_data] . ">" . $rows[title] . "</option>
+		<!-- BEGIN: list_module -->
+		<option {ROW.selected} value="{ROW.module_data}">{ROW.title}</option>
+		<!-- END: list_module -->
 		</select></td></tr><tr>
 				<td style="padding:2px;"><label>Tên mẫu (<span class="require">*</span>)</label></td>
 				<td style="padding:2px;"><input name="name" type="text" id="name" style="width:60%;" class="form-control" value="{ITEM.name}" /></td>
@@ -50,15 +52,15 @@
 			<tr>
 				<td style="padding:2px;"><label>Trạng thái tin bài</label></td>
 				<td style="padding:2px;"><select name="status" id="status" class="form-control w200">
-				<option value="0".($item[status]==0? selected:).>Chờ duyệt</option>
-				<option value="1".($item[status]==1? selected:).>Đăng bài ngay</option>
+				<option value="0" {ITEM.status0}>Chờ duyệt</option>
+				<option value="1" {ITEM.status1}>Đăng bài ngay</option>
 				</select></td>
 			</tr>
 			<tr>
 				<td style="padding:2px;"><label>Lấy ảnh đại diện về host</label></td>
 				<td style="padding:2px;"><select name="get_image" id="get_image" class="form-control w200">
-				<option value="1".($item[get_image]==1? selected:).>Có</option>
-				<option value="0".($item[get_image]==0? selected:).>Không</option>
+				<option value="1" {ITEM.get_image0}>Có</option>
+				<option value="0" {ITEM.get_image1}>Không</option>
 				</select></td>
 			</tr>
 			<tr>
@@ -77,19 +79,20 @@
 			<tr>
 				<td style="padding:2px;"><label>Nguồn tin</label></td>
 				<td style="padding:2px;"><select name="sourceid" id="sourceid" class="form-control w200">;
+				<!-- BEGIN: list_source -->
 				<option value="{SOURCE.sourceid}" {SOURCE.selected}>{SOURCE.title}</option>
-
+				<!-- END: list_source -->
 			</select></td>
 			</tr>
 			<tr>
 				<td style="padding:2px;"><label>Nhóm tin</label></td>
 				<td style="padding:2px;">
 				<!-- BEGIN: list_bid -->
-				<input name="bid[{BID.bid}]" type="checkbox" id="bid[{BID.bid}]" value="{BID.bid}" {BID.selected}/> <label>{BID.title}</label>
+				<input name="bid[]" type="checkbox" id="{BID.bid}" value="{BID.bid}" {BID.checked}/> <label>{BID.title}</label>
 				<!-- END: list_bid -->
 				</td>
 			</tr>
 		</table>
-		</div>
-		</form>
+	</div>
+</form>
 <!-- END: main -->

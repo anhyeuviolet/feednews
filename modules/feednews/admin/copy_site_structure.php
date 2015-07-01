@@ -28,18 +28,82 @@ $site=$query_id->fetch();
 
 $error="";
 if($id and $site){
-	// chèn dữ liệu vào bảng _site
-	$query = "INSERT INTO " . NV_PREFIXLANG . "_" . $module_name. "_site (`id`, `name`, `host`, `url`, `extra`, `count`, `table_name`, `get_image`, `image_pattern`, `image_content_left`, `image_content_right`, `pattern_bound`, `catid`, `status`, `page_num`, `image_dir`,`sourceid`, `begin`, `end`, `bid`, `cat_title`) VALUES
-	(NULL,'".$site['name']."','".$site['host']."','".$site['url']."','".$site['extra']."','".$site['count']."','".$site['table_name']."','".$site['get_image']."','".$site['image_pattern']."','".$site['image_content_left']."','".$site['image_content_right']."','".$site['pattern_bound']."','".$site['catid']."','".$site['status']."','','".$site['image_dir']."','".$site['sourceid']."','','','".$site['bid']."','".$site['cat_title']."')";
-	if( $new_id=$db->query( $query ) )
+		// chèn dữ liệu vào bảng _site
+	$stmt = $db->prepare( 'INSERT INTO ' . NV_PREFIXLANG . '_' . $module_data. '_site SET
+		name=:name,
+		host=:host,
+		url=:url,
+		extra=:extra,
+		count=:count,
+		table_name=:table_name,
+		pattern_bound=:pattern_bound,
+		
+		get_image=:get_image,
+		image_pattern=:image_pattern,
+		image_content_left=:image_content_left,
+		image_content_right=:image_content_right,
+		page_num=:page_num, 
+		sourceid=:sourceid, 
+		begin=:begin,
+		end=:end,
+		bid=:bid,
+		
+		catid=:catid,
+		status=:status,
+		image_dir=:image_dir,
+		cat_title=:cat_title' );
+
+		$stmt->bindParam( ':name', $site['name'], PDO::PARAM_STR );
+		$stmt->bindParam( ':host', $site['host'], PDO::PARAM_STR );
+		$stmt->bindParam( ':url', $site['url'], PDO::PARAM_STR );
+		$stmt->bindParam( ':extra', $site['extra'], PDO::PARAM_STR );
+		$stmt->bindParam( ':count', $site['count'], PDO::PARAM_STR );
+		$stmt->bindParam( ':table_name', $site['table_name'], PDO::PARAM_STR );
+		$stmt->bindParam( ':pattern_bound', $site['pattern_bound'], PDO::PARAM_STR );
+		
+		
+		$stmt->bindParam( ':get_image', $site['get_image'], PDO::PARAM_STR );
+		$stmt->bindParam( ':image_pattern', $site['image_pattern'], PDO::PARAM_STR );
+		$stmt->bindParam( ':image_content_left', $site['image_content_left'], PDO::PARAM_STR );
+		$stmt->bindParam( ':image_content_right', $site['image_content_right'], PDO::PARAM_STR );
+		$stmt->bindParam( ':page_num', $site['page_num'], PDO::PARAM_STR );
+		$stmt->bindParam( ':sourceid', $site['sourceid'], PDO::PARAM_STR );
+		$stmt->bindParam( ':begin', $site['begin'], PDO::PARAM_STR );
+		$stmt->bindParam( ':end', $site['end'], PDO::PARAM_STR );
+		$stmt->bindParam( ':bid', $site['bid'], PDO::PARAM_STR );
+		
+		$stmt->bindParam( ':catid', $site['catid'], PDO::PARAM_STR );
+		$stmt->bindParam( ':status', $site['status'], PDO::PARAM_STR );
+		
+		$stmt->bindParam( ':image_dir', $site['image_dir'], PDO::PARAM_STR );
+		$stmt->bindParam( ':cat_title', $site['cat_title'], PDO::PARAM_STR );
+		$stmt->execute();
+		
+		
+		
+	if( $new_id = $db->lastInsertId() )
 	{
+		var_dump( $new_id);
 		// chèn dữ liệu vào bảng _site_structure
 		$query="select ".$__site_structure.".* from ".$__site_structure." where site_id=".$id;
 		if($query_id=$db->query( $query )){
 			while($row = $query_id->fetch())
 			{
-				$query="INSERT INTO ".$__site_structure." (id, site_id, field_name, extra, count, element_delete, string_delete) VALUES (NULL, '".$new_id."','".$row['field_name']."','".$row['extra']."','".$row['element_delete']."','".$row['string_delete']."')";
-				$db->query( $query );
+				$stmt = $db->prepare( 'INSERT INTO ' . NV_PREFIXLANG . '_' . $module_data. '_site SET
+				id=:id,
+				site_id=:site_id,
+				field_name=:field_name,
+				extra=:extra,
+				element_delete=:element_delete,
+				string_delete=:string_delete');
+				
+				$stmt->bindParam( ':id', NULL, PDO::PARAM_STR );
+				$stmt->bindParam( ':site_id', $row['site_id'], PDO::PARAM_STR );
+				$stmt->bindParam( ':field_name', $row['field_name'], PDO::PARAM_STR );
+				$stmt->bindParam( ':extra', $row['extra'], PDO::PARAM_STR );
+				$stmt->bindParam( ':element_delete', $row['element_delete'], PDO::PARAM_STR );
+				$stmt->bindParam( ':string_delete', $row['string_delete'], PDO::PARAM_STR );
+				$stmt->execute();
 			}
 		}
 		Header( "Location: " . NV_BASE_ADMINURL . "index.php?" . NV_NAME_VARIABLE . "=" . $module_name );

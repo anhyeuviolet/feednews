@@ -17,6 +17,13 @@ $xtpl->assign( 'NV_OP_VARIABLE', NV_OP_VARIABLE );
 $xtpl->assign( 'MODULE_NAME', $module_name );
 $xtpl->assign( 'OP', $op );
 
+$xtpl->assign( 'BUTTON', array(
+	'add' => NV_BASE_ADMINURL . 'index.php?' . NV_LANG_VARIABLE . '=' . NV_LANG_DATA . '&amp;' . NV_NAME_VARIABLE . '=' . $module_name . '&amp;' . NV_OP_VARIABLE . '=add_site_structure',
+	'copy' => NV_BASE_ADMINURL . 'index.php?' . NV_LANG_VARIABLE . '=' . NV_LANG_DATA . '&amp;' . NV_NAME_VARIABLE . '=' . $module_name . '&amp;' . NV_OP_VARIABLE . '=copy_site_structure',
+	'edit' => NV_BASE_ADMINURL . 'index.php?' . NV_LANG_VARIABLE . '=' . NV_LANG_DATA . '&amp;' . NV_NAME_VARIABLE . '=' . $module_name . '&amp;' . NV_OP_VARIABLE . '=edit_site_structure',
+	'temp' => NV_BASE_ADMINURL . 'index.php?' . NV_LANG_VARIABLE . '=' . NV_LANG_DATA . '&amp;' . NV_NAME_VARIABLE . '=' . $module_name . '&amp;' . NV_OP_VARIABLE . '=temp_site_structure',
+) );
+
 $__site=NV_PREFIXLANG . "_" . $module_name . "_site";
 $__site_structure=NV_PREFIXLANG . "_" . $module_name . "_site_structure";
 
@@ -142,7 +149,7 @@ while( $cat = $cat_id->fetch() )
 }
 	while( $source = $source_id->fetch() )
 	{
-		if ($source['catid'] == $item['source'])
+		if ($source['sourceid'] == $item['sourceid'])
 		{
 		$source['selected'] = "selected";
 		}
@@ -154,15 +161,31 @@ while( $cat = $cat_id->fetch() )
 	{
 		while($b = $bid->fetch() )
 		{
-		if ($b['bid'] == $item['bid'])
+		if (isset($block[$b['bid']]))
 		{
-		$b['selected'] = "selected";
+			$b['checked'] = "checked";
 		}
 			$xtpl->assign( 'BID', $b );
 			$xtpl->parse( 'main.list_bid' );
 		}
 	}
-$xtpl->assign( 'ITEM', $item );
+	if ($item['status']==0)
+	{
+		$item['status0']= "selected";
+	}else if ($item['status']==1)
+	{
+		$item['status1']= "selected";
+	}
+	
+	if ($item['get_image']==0)
+	{
+		$item['get_image0']= "selected";
+	}else if ($item['get_image']==1)
+	{
+		$item['get_image1']= "selected";
+	}
+	
+	$xtpl->assign( 'ITEM', $item );
 } else {
 	$error = "Không tồn tại mẫu này!";
 }
