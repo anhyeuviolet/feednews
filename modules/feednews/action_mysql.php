@@ -1,10 +1,10 @@
 <?php
 
 /**
- * @Project FEEDNEWS 3.3.01
- * @Author MINHTC.NET (hunters49@gmail.com)
- * @Copyright (C) 2013 MINHTC.NET All rights reserved
- * @Createdate Sun, 28 Jul 2013 00:57:11 GMT
+ * @Project FEEDNEWS FOR NUKEVIET 4
+ * @Author FORUM.NUKEVIET.VN
+
+ * @Created Wed, 01 Jul 2015 18:00:00 GMT
  */
 
 if ( ! defined( 'NV_MAINFILE' ) ) die( 'Stop!!!' );

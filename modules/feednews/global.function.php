@@ -1157,4 +1157,3 @@ function change( $text )
 	return $text;
 }
 
-?>

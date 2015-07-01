@@ -2,9 +2,9 @@
 
 /**
  * @Project FEEDNEWS 3.2.01
- * @Author MINHTC.NET (hunters49@gmail.com)
- * @Copyright (C) 2013 MINHTC.NET All rights reserved
- * @Createdate Sun, 28 Jul 2013 00:57:11 GMT
+ * @Author FORUM.NUKEVIET.VN
+
+ * @Created Wed, 01 Jul 2015 18:00:00 GMT
  */
 
 if ( ! defined( 'NV_IS_FILE_ADMIN' ) ) die( 'Stop!!!' );
@@ -16,7 +16,6 @@ $xtpl->assign( 'NV_NAME_VARIABLE', NV_NAME_VARIABLE );
 $xtpl->assign( 'NV_OP_VARIABLE', NV_OP_VARIABLE );
 $xtpl->assign( 'MODULE_NAME', $module_name );
 $xtpl->assign( 'OP', $op );
-$xtpl->parse( 'main' );
 
 $page_title = $lang_module['copy_site_structure'];
 $__site=NV_PREFIXLANG . "_" . $module_name . "_site";
@@ -83,22 +82,20 @@ if($id and $site){
 		
 	if( $new_id = $db->lastInsertId() )
 	{
-		var_dump( $new_id);
-		// chèn dữ liệu vào bảng _site_structure
+		// Lay du lieu tu table goc
 		$query="select ".$__site_structure.".* from ".$__site_structure." where site_id=".$id;
 		if($query_id=$db->query( $query )){
 			while($row = $query_id->fetch())
 			{
-				$stmt = $db->prepare( 'INSERT INTO ' . NV_PREFIXLANG . '_' . $module_data. '_site SET
-				id=:id,
+				// Chen du lieu vao _site_structure
+				$stmt = $db->prepare( 'INSERT INTO '.$__site_structure. ' SET
 				site_id=:site_id,
 				field_name=:field_name,
 				extra=:extra,
 				element_delete=:element_delete,
 				string_delete=:string_delete');
 				
-				$stmt->bindParam( ':id', NULL, PDO::PARAM_STR );
-				$stmt->bindParam( ':site_id', $row['site_id'], PDO::PARAM_STR );
+				$stmt->bindParam( ':site_id', $new_id, PDO::PARAM_STR );
 				$stmt->bindParam( ':field_name', $row['field_name'], PDO::PARAM_STR );
 				$stmt->bindParam( ':extra', $row['extra'], PDO::PARAM_STR );
 				$stmt->bindParam( ':element_delete', $row['element_delete'], PDO::PARAM_STR );
@@ -106,25 +103,21 @@ if($id and $site){
 				$stmt->execute();
 			}
 		}
-		Header( "Location: " . NV_BASE_ADMINURL . "index.php?" . NV_NAME_VARIABLE . "=" . $module_name );
+		Header( "Location: " . NV_BASE_ADMINURL . "index.php?" . NV_NAME_VARIABLE . "=" . $module_name .'&op=edit_site_structure&id='.$new_id);
 		die();
 	}else{
-		$error .= "Nhân bản lỗi, không lưu được dữ liệu";
+		$error = "Nhân bản lỗi, không lưu được dữ liệu";
 	}
 }else{
-	$error .= "Không tồn tại mẫu nguồn để nhân bản";
+	$error = "Không tồn tại mẫu nguồn để nhân bản";
 }
 if($error){
-	$contents .= "   
-<div class=\"quote\" style=\"width: 780px;\">        
-	<blockquote class=\"error\"><span style=\"font-size:16px\">" . $error . "</span>        
-	</blockquote></div><div class=\"clear\">
-</div>";
+	$contents = $error;
+	$xtpl->assign( 'ERROR',$error );
 }
-$contents.='<a href="'.NV_BASE_ADMINURL.'index.php?'.NV_NAME_VARIABLE.'='.$module_name.'" style="color:#000;"><button type="button">Danh sách</button></a>';
+$xtpl->parse( 'main' );
+$contents = $xtpl->text( 'main' );
 
 include ( NV_ROOTDIR . "/includes/header.php" );
 echo nv_admin_theme( $contents );
 include ( NV_ROOTDIR . "/includes/footer.php" );
-
-?>

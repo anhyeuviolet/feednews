@@ -1,8 +1,8 @@
 /**
  * @Project FEEDNEWS 3.2.01
- * @Author MINHTC.NET (hunters49@gmail.com)
- * @Copyright (C) 2013 MINHTC.NET All rights reserved
- * @Createdate Sun, 28 Jul 2013 00:57:11 GMT
+ * @Author FORUM.NUKEVIET.VN
+
+ * @Created Wed, 01 Jul 2015 18:00:00 GMT
  */
 function feedNews(){
 	var check=false;

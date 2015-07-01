@@ -58,4 +58,4 @@ function html_no_comment($url) {
     unset($html);
     return $ret;
 }
-?>
+
