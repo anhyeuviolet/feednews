@@ -1,10 +1,11 @@
 <?php
 
 /**
- * @Project FEEDNEWS 3.0.01
- * @Author MINHTC.NET (hunters49@gmail.com)
- * @Copyright (C) 2013 MINHTC.NET All rights reserved
- * @Createdate Sun, 28 Jul 2013 00:57:11 GMT
+ * @Project FEEDNEWS ON NUKEVIET 4.x
+ * @Author KENNYNGUYEN (nguyentiendat713@gmail.com)
+ * @Copyright (C) 2014 VINADES.,JSC. All rights reserved
+ * @License GNU/GPL version 2 or any later version
+ * @Createdate 07/30/2013 10:27
  */
 
 if ( ! defined( 'NV_IS_FILE_ADMIN' ) ) die( 'Stop!!!' );
@@ -16,7 +17,13 @@ $xtpl->assign( 'NV_NAME_VARIABLE', NV_NAME_VARIABLE );
 $xtpl->assign( 'NV_OP_VARIABLE', NV_OP_VARIABLE );
 $xtpl->assign( 'MODULE_NAME', $module_name );
 $xtpl->assign( 'OP', $op );
-$xtpl->parse( 'main' );
+
+$xtpl->assign( 'BUTTON', array(
+	'add' => NV_BASE_ADMINURL . 'index.php?' . NV_LANG_VARIABLE . '=' . NV_LANG_DATA . '&amp;' . NV_NAME_VARIABLE . '=' . $module_name . '&amp;' . NV_OP_VARIABLE . '=add_site_structure',
+	'copy' => NV_BASE_ADMINURL . 'index.php?' . NV_LANG_VARIABLE . '=' . NV_LANG_DATA . '&amp;' . NV_NAME_VARIABLE . '=' . $module_name . '&amp;' . NV_OP_VARIABLE . '=copy_site_structure',
+	'edit' => NV_BASE_ADMINURL . 'index.php?' . NV_LANG_VARIABLE . '=' . NV_LANG_DATA . '&amp;' . NV_NAME_VARIABLE . '=' . $module_name . '&amp;' . NV_OP_VARIABLE . '=edit_site_structure',
+	'temp' => NV_BASE_ADMINURL . 'index.php?' . NV_LANG_VARIABLE . '=' . NV_LANG_DATA . '&amp;' . NV_NAME_VARIABLE . '=' . $module_name . '&amp;' . NV_OP_VARIABLE . '=temp_site_structure',
+) );
 
 $__site=NV_PREFIXLANG . "_" . $module_name . "_site";
 $__site_structure=NV_PREFIXLANG . "_" . $module_name . "_site_structure";
@@ -27,6 +34,7 @@ $edit_id=$db->query( $query );
 $error="";
 
 if($item=$edit_id->fetch()){
+	
 	//debug($item);
 	if(isset($_REQUEST['table_name']) and $_REQUEST['table_name']){
 		$table_name=$_REQUEST['table_name'];
@@ -75,8 +83,8 @@ if($item=$edit_id->fetch()){
 		$sourceid = $nv_Request->get_int( 'sourceid', 'post' );
 		$bid=implode(',',$nv_Request->get_array( 'bid', 'post' ));
 		
-		if($name=='\'\'' or $host=='\'\'' or $url=='\'\'' or $extra=='\'\'' or $pattern_bound=='\'\''){
-			$error .= "Hãy nhập đầy đủ các thông tin cần thiết";
+		if($name=='' or $host=='' or $url=='' or $extra=='' or $pattern_bound=='' or $count ==''){
+			$error = "Hãy nhập đầy đủ các thông tin cần thiết";
 		}else{
 			// lấy danh mục tin đã chọn
 			$query="select ".$__cat.".* from ".$__cat." where catid=".$catid;
@@ -109,138 +117,87 @@ if($item=$edit_id->fetch()){
 			}
 		}
 	}
-if( $error )
+
+$sql = 'SELECT * FROM ' . NV_PREFIXLANG . '_modules WHERE module_file="news"';
+$result = $db->query( $sql );
+while( $row = $result->fetch() )
 {
-	$contents .= "   
-<div class=\"alert alert-danger\">" . $error . "</div>
-<div class=\"clear\">
-</div>";
+	if($table_name==$row['module_data'])
+	{
+		$row['selected'] ="selected";
+	}
+	$xtpl->assign( 'ROW', $row );
+	$xtpl->parse( 'main.list_module' );
 }
-	$contents .= '<form name="EditDeclarationSite" id="EditDeclarationSite" method="post">
-		<button type="submit" class="btn btn-success">Ghi lại</button>
-		<a href="'.NV_BASE_ADMINURL.'index.php?'.NV_NAME_VARIABLE.'='.$module_name.'&'.NV_OP_VARIABLE.'=temp_site_structure&id='.$item['id'].'" style="color:#000;"><button type="button" class="btn btn-primary">Cấu trúc</button></a>
-		<a href="'.NV_BASE_ADMINURL.'index.php?'.NV_NAME_VARIABLE.'='.$module_name.'" style="color:#000;"><button type="button" class="btn btn-primary">Danh sách</button></a>
-		<a href="'.NV_BASE_ADMINURL.'index.php?'.NV_NAME_VARIABLE.'='.$module_name.'&'.NV_OP_VARIABLE.'=add_site_structure" style="color:#000;"><button class="btn btn-primary" type="button">Thêm mẫu</button></a>
-		<span style="float:right; font-weight:700;">Mục có dấu (<span class="require">*</span>) là bắt buộc</span>
-		
-	<div class="table-responsive" style="margin-top: 10px">
-		<table class="table table-striped table-bordered table-hover">
-		<tr><td style="padding:2px;"><label>Module lưu tin</label></td><td>
-		<select class="form-control w200" name="module" id="module" onchange="window.location=\''.NV_BASE_ADMINURL .'index.php?'. NV_NAME_VARIABLE . '=' . $module_name.'&'.NV_OP_VARIABLE.'=edit_site_structure&id='.$item['id'].'&table_name=\'+this.value">
-		';
-		$sql = "SELECT * FROM `" . NV_PREFIXLANG . "_modules` WHERE `module_file`='news'";
-		$result = $db->query( $sql );
-		while( $rows = $result->fetch() )
+
+while( $cat = $cat_id->fetch() )
+{
+	$xtitle_i = "";
+	if( $cat['lev'] > 0 )
+	{
+		for( $i = 1; $i <= $cat['lev']; $i++ )
 		{
-			$select1="";
-			if($table_name==$rows['module_data']){
-				$select1 = " selected=\"selected\"";
-			}
-			$contents .= "<option " . $select1 . " value=\"" . $rows['module_data'] . "\">" . $rows['title'] . "</option>";
+			$xtitle_i = "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
+			$xtpl->assign( 'LEVEL', $xtitle_i );
+			$xtpl->parse( 'main.list_cat.level' );
 		}
+	}
+	if ($cat['catid'] == $item['catid']){
+		$cat['selected'] = "selected";
+	}
+	$xtpl->assign( 'CAT', $cat );
+	$xtpl->parse( 'main.list_cat' );
+}
+	while( $source = $source_id->fetch() )
+	{
+		if ($source['sourceid'] == $item['sourceid'])
+		{
+		$source['selected'] = "selected";
+		}
+		$xtpl->assign( 'SOURCE', $source );
+		$xtpl->parse( 'main.list_source' );
+	}
 
-	$contents .= '</select></td></tr><tr>
-				<td style="padding:2px;"><label>Tên mẫu (<span class="require">*</span>)</label></td>
-				<td style="padding:2px;"><input name="name" type="text" id="name" style="width:60%;" class="form-control" value=\''.$item['name'].'\' /></td>
-			</tr>
-			<tr>
-				<td style="padding:2px;"><label>Host (<span class="require">*</span>)</label></td>
-				<td style="padding:2px;"><input name="host" type="text" id="host" style="width:60%;" class="form-control" value=\''.$item['host'].'\' /></td>
-			</tr>
-			<tr>
-				<td style="padding:2px;"><label>Url (<span class="require">*</span>)</label></td>
-				<td style="padding:2px;"><input name="url" type="text" id="url" style="width:60%;" class="form-control" value=\''.$item['url'].'\' /></td>
-			</tr>
-			<tr>
-				<td style="padding:2px;"><label>Mẫu bao ngoài một đối tượng (<span class="require">*</span>)</label></td>
-				<td style="padding:2px;"><input name="pattern_bound" type="text" id="pattern_bound" style="width:60%;" class="form-control" value=\''.$item['pattern_bound'].'\'  /></td>
-			</tr>
-			<tr>
-				<td style="padding:2px;"><label>Mẫu liên kết một tin (<span class="require">*</span>)</label></td>
-				<td style="padding:2px;"><input name="extra" type="text" id="extra" style="width:60%;" class="form-control" value=\''.$item['extra'].'\' /></td>
-			</tr>
-			<tr>
-				<td style="padding:2px;"><label>Số tin lấy (<span class="require">*</span>)</label></td>
-				<td style="padding:2px;"><input name="count" type="text" id="count" style="width:60%;" class="form-control" value=\''.$item['count'].'\' /></td>
-			</tr>
-			<tr>
-				<td style="padding:2px;"><label>Chèn vào danh mục</label></td>
-				<td style="padding:2px;"><select name="catid" id="catid" class="form-control w200">
-				';
-				while( $cat = $cat_id->fetch() )
-				{
-					$xtitle_i = "";
-					if( $cat['lev'] > 0 )
-					{
-						for( $i = 1; $i <= $cat['lev']; $i++ )
-						{
-							$xtitle_i .= "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
-						}
-					}
-					$contents .= '<option value="'.$cat['catid'].'"'.($cat['catid']==$item['catid']?' selected="selected"':'').'>'.$xtitle_i . $cat['title'].'</option>';
-				}
-
-				$contents .= '</select></td>
-			</tr>
-			<tr>
-				<td style="padding:2px;"><label>Trạng thái tin bài</label></td>
-				<td style="padding:2px;"><select name="status" id="status" class="form-control w200">
-				<option value="0"'.($item['status']==0?' selected':'').'>Chờ duyệt</option>
-				<option value="1"'.($item['status']==1?' selected':'').'>Đăng bài ngay</option>
-				</select></td>
-			</tr>
-			<tr>
-				<td style="padding:2px;"><label>Lấy ảnh đại diện về host</label></td>
-				<td style="padding:2px;"><select name="get_image" id="get_image" class="form-control w200">
-				<option value="1"'.($item['get_image']==1?' selected':'').'>Có</option>
-				<option value="0"'.($item['get_image']==0?' selected':'').'>Không</option>
-				</select></td>
-			</tr>
-			<tr>
-				<td style="padding:2px;"><label>Mẫu ảnh đại diện</label></td>
-				<td style="padding:2px;"><input name="image_pattern" type="text" id="image_pattern" style="width:60%;" class="form-control" value=\''.$item['image_pattern'].'\' /></td>
-			</tr>
-			<tr>
-				<td style="padding:2px;"><label>Thay thế đường dẫn ảnh trong nội dung</label></td>
-				<td style="padding:2px;">
-					<label>
-					 <input name="image_content_left" type="text" id="image_content_left" style="width:35%;" class="form-control pull-left" value=\''.$item['image_content_left'].'\' /> <span class="pull-left">==></span> 
-					 <input name="image_content_right" type="text" id="image_content_right" style="width:35%;" class="form-control pull-left" value=\''.$item['image_content_right'].'\' />
-					</label>
-				</td>
-		   </tr>
-			<tr>
-				<td style="padding:2px;"><label>Nguồn tin</label></td>
-				<td style="padding:2px;"><select name="sourceid" id="sourceid" class="form-control w200">';
-				while( $source = $source_id->fetch() )
-				{
-					$contents .= '<option value="'.$source['sourceid'].'"'.((isset($item['sourceid']) and $item['sourceid']==$source['sourceid'])?' selected':'').'>'.$source['title'].'</option>';
-				}
-
-			$contents .= '</select></td>
-			</tr>
-			<tr>
-				<td style="padding:2px;"><label>Nhóm tin</label></td>
-				<td style="padding:2px;">
-				';
-				while( $b = $bid->fetch() )
-				{
-					$contents .= '<input name="bid['.$b['bid'].']" type="checkbox" id="bid['.$b['bid'].']" value="'.$b['bid'].'"'.(isset($block[$b['bid']])?' checked':'').' /> <label for="bid['.$b['bid'].']">'.$b['title'].'</label> ';
-				}
-
-				$contents .= '</td>
-			</tr>
-		</table>
-		</div>
-		<input type="hidden" name="cmd" value="1" id="cmd" />
-		</form>';
-}else{
-	$contents .= "<div class=\"alert alert-danger\">Không tồn tại mẫu này</div>";
+	if( $bid )
+	{
+		while($b = $bid->fetch() )
+		{
+		if (isset($block[$b['bid']]))
+		{
+			$b['checked'] = "checked";
+		}
+			$xtpl->assign( 'BID', $b );
+			$xtpl->parse( 'main.list_bid' );
+		}
+	}
+	if ($item['status']==0)
+	{
+		$item['status0']= "selected";
+	}else if ($item['status']==1)
+	{
+		$item['status1']= "selected";
+	}
+	
+	if ($item['get_image']==0)
+	{
+		$item['get_image0']= "selected";
+	}else if ($item['get_image']==1)
+	{
+		$item['get_image1']= "selected";
+	}
+	
+	$xtpl->assign( 'ITEM', $item );
+} else {
+	$error = "Không tồn tại mẫu này!";
 }
 
+if($error){
+	$xtpl->assign( 'ERROR', $error );
+	$xtpl->parse( 'main.error' );
+}
 
+$xtpl->parse( 'main' );
+$contents = $xtpl->text( 'main' );
 include ( NV_ROOTDIR . "/includes/header.php" );
 echo nv_admin_theme( $contents );
 include ( NV_ROOTDIR . "/includes/footer.php" );
-
-?>

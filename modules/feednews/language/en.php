@@ -19,4 +19,3 @@ $lang_module['main'] = "Main";
 $lang_module['detail'] = "Detail";
 $lang_module['search'] = "Search";
 
-?>

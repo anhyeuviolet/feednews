@@ -1,10 +1,11 @@
 <?php
 
 /**
- * @Project FEEDNEWS 3.0.01
- * @Author MINHTC.NET (hunters49@gmail.com)
- * @Copyright (C) 2013 MINHTC.NET All rights reserved
- * @Createdate Sun, 28 Jul 2013 00:57:11 GMT
+ * @Project FEEDNEWS ON NUKEVIET 4.x
+ * @Author KENNYNGUYEN (nguyentiendat713@gmail.com)
+ * @Copyright (C) 2014 VINADES.,JSC. All rights reserved
+ * @License GNU/GPL version 2 or any later version
+ * @Createdate 07/30/2013 10:27
  */
 
 if ( ! defined( 'NV_IS_FILE_ADMIN' ) ) die( 'Stop!!!' );
@@ -16,7 +17,7 @@ $xtpl->assign( 'NV_NAME_VARIABLE', NV_NAME_VARIABLE );
 $xtpl->assign( 'NV_OP_VARIABLE', NV_OP_VARIABLE );
 $xtpl->assign( 'MODULE_NAME', $module_name );
 $xtpl->assign( 'OP', $op );
-$xtpl->parse( 'main' );
+
 $page_title = $lang_module['add_site_structure'];
 
 $__site=NV_PREFIXLANG . "_" . $module_name . "_site";
@@ -63,8 +64,8 @@ if($cmd){
 	$image_dir = '';
 	$page_num = '';
 	
-	if(!$name or !$host or !$url or !$extra or !$pattern_bound){
-		$error .= "Hãy nhập đầy đủ các thông tin cần thiết";
+	if(!$name or !$host or !$url or !$extra or !$pattern_bound or $count ==''){
+		$error = $lang_module['lack_data'];
 	}else{
 		// lấy danh mục tin đã chọn
 		$query="select ".$__cat.".* from ".$__cat." where catid=".$catid;
@@ -115,146 +116,69 @@ if($cmd){
 		$stmt->bindParam( ':end', $table_name, PDO::PARAM_STR );
 		$stmt->bindParam( ':bid', $bid, PDO::PARAM_STR );
 		
-		
 		$stmt->bindParam( ':image_dir', $image_dir, PDO::PARAM_STR );
 		$stmt->bindParam( ':cat_title', $catinfo['title'], PDO::PARAM_STR );
 		$stmt->execute();
-	if( $id = $db->lastInsertId() )
-	{
+		if( $id = $db->lastInsertId() )
+		{
 			Header( "Location: " . NV_BASE_ADMINURL . "index.php?" . NV_NAME_VARIABLE . "=" . $module_name."&".NV_OP_VARIABLE."=temp_site_structure&id=".$id."" );
 			die();
 		}else{
-			$error .= "Không thể lưu dữ liệu được";
+			$error = $lang_module['error_save'];
 		}
 	}
 }
 
-if( $error )
+$sql = 'SELECT * FROM ' . NV_PREFIXLANG . '_modules WHERE module_file="news"';
+$result = $db->query( $sql );
+while( $row = $result->fetch() )
 {
-	$contents .= "<div class=\"alert alert-danger\">" . $error . "</div>";
+	if($table_name==$row['module_data'])
+	{
+		$row['selected'] ="selected";
+	}
+	$xtpl->assign( 'ROW', $row );
+	$xtpl->parse( 'main.list_module' );
 }
-$contents .= '<form name="EditDeclarationSite" id="EditDeclarationSite" method="post">
-        <button type="submit" class="btn btn-success">Ghi lại</button>
-		<a href="'.NV_BASE_ADMINURL.'index.php?'.NV_NAME_VARIABLE.'='.$module_name.'" style="color:#000;"><button type="button" class="btn btn-primary">Danh sách</button></a>
-		<span style="float:right; font-weight:700;">Mục có dấu (<span class="require">*</span>) là bắt buộc</span>
-		<div class="table-responsive" style="margin-top: 10px">
-		<table class="table table-striped table-bordered table-hover">
-		<tr><td style="padding:2px;"><label>Module lưu tin</label></td><td>
-		<select class="form-control w200" name="module" id="module" onchange="window.location=\''.NV_BASE_ADMINURL .'index.php?'. NV_NAME_VARIABLE . '=' . $module_name.'&'.NV_OP_VARIABLE.'=add_site_structure&table_name=\'+this.value">
-		';
-		$sql = "SELECT * FROM " . NV_PREFIXLANG . "_modules WHERE module_file='news'";
-		$result = $db->query( $sql );
-		while( $rows = $result->fetch() )
+
+while( $cat = $cat_id->fetch() )
+{
+	$xtitle_i = "";
+	if( $cat['lev'] > 0 )
+	{
+		for( $i = 1; $i <= $cat['lev']; $i++ )
 		{
-			$select1="";
-			if($table_name==$rows['module_data']){
-				$select1 = " selected=\"selected\"";
-			}
-			$contents .= "<option " . $select1 . " value=\"" . $rows['module_data'] . "\">" . $rows['title'] . "</option>";
+			$xtitle_i = "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
+			$xtpl->assign( 'LEVEL', $xtitle_i );
+			$xtpl->parse( 'main.list_cat.level' );
 		}
-
-	$contents .= '</select></td></tr><tr>
-                <td style="padding:2px;"><label>Tên mẫu (<span class="require">*</span>)</label></td>
-                <td style="padding:2px;"><input name="name" type="text" id="name" style="width:60%;" class="form-control" /></td>
-            </tr>
-            <tr>
-                <td style="padding:2px;"><label>Host (<span class="require">*</span>)</label></td>
-                <td style="padding:2px;"><input name="host" type="text" id="host" style="width:60%;" class="form-control" /></td>
-            </tr>
-            <tr>
-                <td style="padding:2px;"><label>Url (<span class="require">*</span>)</label></td>
-                <td style="padding:2px;"><input name="url" type="text" id="url" style="width:60%;" class="form-control" /></td>
-            </tr>
-            <tr>
-                <td style="padding:2px;"><label>Mẫu bao ngoài một đối tượng (<span class="require">*</span>)</label></td>
-                <td style="padding:2px;"><input name="pattern_bound" type="text" id="pattern_bound" style="width:60%;" class="form-control" /></td>
-            </tr>
-            <tr>
-                <td style="padding:2px;"><label>Mẫu liên kết một tin (<span class="require">*</span>)</label></td>
-                <td style="padding:2px;"><input name="extra" type="text" id="extra" style="width:60%;" class="form-control" /></td>
-            </tr>
-            <tr>
-                <td style="padding:2px;"><label>Số tin lấy</label></td>
-                <td style="padding:2px;"><input name="count" type="text" id="count" style="width:60%;" class="form-control" /></td>
-            </tr>
-            <tr>
-                <td style="padding:2px;"><label>Chèn vào danh mục</label></td>
-                <td style="padding:2px;"><select name="catid" id="catid" class="form-control w200">
-				';
-				while( $cat = $cat_id->fetch() )
-				{
-					$xtitle_i = "";
-					if( $cat['lev'] > 0 )
-					{
-						for( $i = 1; $i <= $cat['lev']; $i++ )
-						{
-							$xtitle_i .= "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
-						}
-					}
-					$contents .= '<option value="'.$cat['catid'].'">'.$xtitle_i . $cat['title'].'</option>';
-				}
-
-                $contents .= '</select></td>
-            </tr>
-			<tr>
-				<td style="padding:2px;"><label>Trạng thái tin bài</label></td>
-				<td style="padding:2px;"><select name="status" id="status" class="form-control w200">
-				<option value="0">Chờ duyệt</option>
-				<option value="1" selected="selected">Đăng bài ngay</option>
-				</select></td>
-			</tr>
-			<tr>
-				<td style="padding:2px;"><label>Lấy ảnh đại diện về host</label></td>
-				<td style="padding:2px;"><select name="get_image" id="get_image" class="form-control w200">
-				<option value="1" selected>Có</option>
-				<option value="0">Không</option>
-				</select></td>
-			</tr>
-            <tr>
-                <td style="padding:2px;"><label>Mẫu ảnh đại diện</label></td>
-                <td style="padding:2px;"><input name="image_pattern" type="text" id="image_pattern" style="width:60%;" class="form-control" /></td>
-            </tr>
-            <tr>
-                <td style="padding:2px;"><label>Thay thế đường dẫn ảnh trong nội dung</label></td>
-                <td style="padding:2px;">
-                     <input name="image_content_left" type="text" id="image_content_left" style="width:35%;" class="form-control pull-left" /> <span class="pull-left text-middle">==></span> 
-                     <input name="image_content_right" type="text" id="image_content_right" style="width:35%;" class="form-control pull-left" />
-                </td>
-           </tr>
-			<tr>
-				<td style="padding:2px;"><label>Nguồn tin</label></td>
-				<td style="padding:2px;"><select name="sourceid" id="sourceid" class="form-control w200">';
-				while( $source = $source_id->fetch() )
-				{
-					$contents .= '<option value="'.$source['sourceid'].'">'.$source['title'].'</option>';
-				}
-
-			$contents .= '</select></td>
-			</tr>
-			<tr>
-					<td style="padding:2px;"><label>Nhóm tin</label></td>
-					<td style="padding:2px;">
-					';
-					if( $bid )
-					{
-						while($b = $bid->fetch() )
-						{
-							$contents .= '<input name="bid['.$b['bid'].']" type="checkbox" id="bid['.$b['bid'].']" value="'.$b['bid'].'" /> <label for="bid['.$b['bid'].']">'.$b['title'].'</label> ';
-						}
-					}
-
-					$contents .= '</td>
-					</tr>';
-					
-			$contents.='
-        </table>
-        </div>
-        <input type="hidden" name="cmd" value="1" id="cmd" />
-	</form>';
+	}
+	$xtpl->assign( 'CAT', $cat );
+	$xtpl->parse( 'main.list_cat' );
+}
 
 
+while( $source = $source_id->fetch() )
+{
+	$xtpl->assign( 'SOURCE', $source );
+	$xtpl->parse( 'main.list_source' );
+}
+
+if( $bid )
+{
+	while($b = $bid->fetch() )
+	{
+		$xtpl->assign( 'BID', $b );
+		$xtpl->parse( 'main.list_bid' );
+	}
+}
+if($error){
+	$xtpl->assign( 'ERROR', $error );
+	$xtpl->parse( 'main.error' );
+}
+
+$xtpl->parse( 'main' );
+$contents = $xtpl->text( 'main' );
 include ( NV_ROOTDIR . "/includes/header.php" );
 echo nv_admin_theme( $contents );
 include ( NV_ROOTDIR . "/includes/footer.php" );
-
-?>

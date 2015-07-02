@@ -1,10 +1,11 @@
 <?php
 
 /**
- * @Project NUKEVIET 3.x - GETNEWS
- * @Author ĐẶNG ĐÌNH TỨ (dlinhvan@gmail.com)
- * @Copyright (C) 2010 webdep24.com All rights reserved
- * @Createdate 10/08/2012 08:00
+ * @Project FEEDNEWS ON NUKEVIET 4.x
+ * @Author KENNYNGUYEN (nguyentiendat713@gmail.com)
+ * @Copyright (C) 2014 VINADES.,JSC. All rights reserved
+ * @License GNU/GPL version 2 or any later version
+ * @Createdate 07/30/2013 10:27
  */
 
 global $module_name;
@@ -1156,5 +1157,3 @@ function change( $text )
 	//}
 	return $text;
 }
-
-?>
