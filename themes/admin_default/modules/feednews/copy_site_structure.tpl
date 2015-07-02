@@ -5,4 +5,4 @@
 	</blockquote>
 </div>
 <a href="{NV_BASE_ADMINURL}index.php?{NV_NAME_VARIABLE}={MODULE_NAME}" class="btn btn-primary">Danh sách</a>
-<!-- BEGIN: main -->
+<!-- END: main -->
