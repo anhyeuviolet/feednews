@@ -1,10 +1,11 @@
 <?php
 
 /**
- * @Project FEEDNEWS 3.0.01
- * @Author FORUM.NUKEVIET.VN
-
- * @Created Wed, 01 Jul 2015 18:00:00 GMT
+ * @Project FEEDNEWS ON NUKEVIET 4.x
+ * @Author KENNYNGUYEN (nguyentiendat713@gmail.com)
+ * @Copyright (C) 2014 VINADES.,JSC. All rights reserved
+ * @License GNU/GPL version 2 or any later version
+ * @Createdate 07/30/2013 10:27
  */
 
 if ( ! defined( 'NV_IS_FILE_ADMIN' ) ) die( 'Stop!!!' );
@@ -82,8 +83,8 @@ if($item=$edit_id->fetch()){
 		$sourceid = $nv_Request->get_int( 'sourceid', 'post' );
 		$bid=implode(',',$nv_Request->get_array( 'bid', 'post' ));
 		
-		if($name=='\'\'' or $host=='\'\'' or $url=='\'\'' or $extra=='\'\'' or $pattern_bound=='\'\''){
-			$error .= "Hãy nhập đầy đủ các thông tin cần thiết";
+		if($name=='' or $host=='' or $url=='' or $extra=='' or $pattern_bound=='' or $count ==''){
+			$error = "Hãy nhập đầy đủ các thông tin cần thiết";
 		}else{
 			// lấy danh mục tin đã chọn
 			$query="select ".$__cat.".* from ".$__cat." where catid=".$catid;

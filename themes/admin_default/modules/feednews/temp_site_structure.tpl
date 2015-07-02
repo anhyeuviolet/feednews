@@ -1,7 +1,7 @@
 <!-- BEGIN: main -->
 <form name="EditDeclarationSite" id="EditDeclarationSite" method="post">
 	<input type="hidden" name="cmd" id="cmd" value="1" />
-	<button type="submit" class="btn btn-success">Ghi lại</button>
+	<button type="submit" class="btn btn-success">{LANG.save}</button>
 	<a href="{BUTTON.edit}&id={ITEM.id}" style="color:#000;"><button type="button" class="btn btn-primary">Sửa mẫu</button></a>
 	<a href="{NV_BASE_ADMINURL}index.php?{NV_NAME_VARIABLE}={MODULE_NAME}" style="color:#000;"><button type="button" class="btn btn-primary">Danh sách</button></a>
 	<a href="{BUTTON.add}" style="color:#000;"><button type="button" class="btn btn-primary">Thêm mẫu</button></a>

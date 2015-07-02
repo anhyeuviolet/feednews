@@ -1,10 +1,11 @@
 <?php
 
 /**
- * @Project FEEDNEWS 3.0.01
- * @Author FORUM.NUKEVIET.VN
-
- * @Created Wed, 01 Jul 2015 18:00:00 GMT
+ * @Project FEEDNEWS ON NUKEVIET 4.x
+ * @Author KENNYNGUYEN (nguyentiendat713@gmail.com)
+ * @Copyright (C) 2014 VINADES.,JSC. All rights reserved
+ * @License GNU/GPL version 2 or any later version
+ * @Createdate 07/30/2013 10:27
  */
 
 if ( ! defined( 'NV_IS_FILE_ADMIN' ) ) die( 'Stop!!!' );
@@ -63,8 +64,8 @@ if($cmd){
 	$image_dir = '';
 	$page_num = '';
 	
-	if(!$name or !$host or !$url or !$extra or !$pattern_bound){
-		$error .= "Hãy nhập đầy đủ các thông tin cần thiết";
+	if(!$name or !$host or !$url or !$extra or !$pattern_bound or $count ==''){
+		$error = $lang_module['lack_data'];
 	}else{
 		// lấy danh mục tin đã chọn
 		$query="select ".$__cat.".* from ".$__cat." where catid=".$catid;
@@ -118,12 +119,12 @@ if($cmd){
 		$stmt->bindParam( ':image_dir', $image_dir, PDO::PARAM_STR );
 		$stmt->bindParam( ':cat_title', $catinfo['title'], PDO::PARAM_STR );
 		$stmt->execute();
-	if( $id = $db->lastInsertId() )
-	{
+		if( $id = $db->lastInsertId() )
+		{
 			Header( "Location: " . NV_BASE_ADMINURL . "index.php?" . NV_NAME_VARIABLE . "=" . $module_name."&".NV_OP_VARIABLE."=temp_site_structure&id=".$id."" );
 			die();
 		}else{
-			$error = "Không thể lưu dữ liệu được";
+			$error = $lang_module['error_save'];
 		}
 	}
 }
@@ -171,7 +172,10 @@ if( $bid )
 		$xtpl->parse( 'main.list_bid' );
 	}
 }
-
+if($error){
+	$xtpl->assign( 'ERROR', $error );
+	$xtpl->parse( 'main.error' );
+}
 
 $xtpl->parse( 'main' );
 $contents = $xtpl->text( 'main' );

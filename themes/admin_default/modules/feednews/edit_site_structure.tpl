@@ -4,7 +4,7 @@
 <!-- END: error -->
 <form name="EditDeclarationSite" id="EditDeclarationSite" method="post">
 	<input type="hidden" name="cmd" value="1" id="cmd" />
-	<button type="submit" class="btn btn-success">Ghi lại</button>
+	<button type="submit" class="btn btn-success">{LANG.save}</button>
 	<a href="{BUTTON.temp}&id={ITEM.id}" style="color:#000;"><button type="button" class="btn btn-primary">Cấu trúc</button></a>
 	<a href="{NV_BASE_ADMINURL}index.php?{NV_NAME_VARIABLE}={MODULE_NAME}" style="color:#000;"><button type="button" class="btn btn-primary">Danh sách</button></a>
 	<a href="{BUTTON.add}" style="color:#000;"><button class="btn btn-primary" type="button">Thêm mẫu</button></a>
@@ -19,27 +19,27 @@
 		<!-- END: list_module -->
 		</select></td></tr><tr>
 				<td style="padding:2px;"><label>Tên mẫu (<span class="require">*</span>)</label></td>
-				<td style="padding:2px;"><input name="name" type="text" id="name" style="width:60%;" class="form-control" value="{ITEM.name}" /></td>
+				<td style="padding:2px;"><input name="name" type="text" id="name" style="width:60%;" class="form-control" value="{ITEM.name}" required="required"/></td>
 			</tr>
 			<tr>
 				<td style="padding:2px;"><label>Host (<span class="require">*</span>)</label></td>
-				<td style="padding:2px;"><input name="host" type="text" id="host" style="width:60%;" class="form-control" value="{ITEM.host}" /></td>
+				<td style="padding:2px;"><input name="host" type="text" id="host" style="width:60%;" class="form-control" value="{ITEM.host}"  required="required"/></td>
 			</tr>
 			<tr>
 				<td style="padding:2px;"><label>Url (<span class="require">*</span>)</label></td>
-				<td style="padding:2px;"><input name="url" type="text" id="url" style="width:60%;" class="form-control" value="{ITEM.url}" /></td>
+				<td style="padding:2px;"><input name="url" type="text" id="url" style="width:60%;" class="form-control" value="{ITEM.url}"  required="required"/></td>
 			</tr>
 			<tr>
 				<td style="padding:2px;"><label>Mẫu bao ngoài một đối tượng (<span class="require">*</span>)</label></td>
-				<td style="padding:2px;"><input name="pattern_bound" type="text" id="pattern_bound" style="width:60%;" class="form-control" value="{ITEM.pattern_bound}"  /></td>
+				<td style="padding:2px;"><input  required="required" name="pattern_bound" type="text" id="pattern_bound" style="width:60%;" class="form-control" value="{ITEM.pattern_bound}"  /></td>
 			</tr>
 			<tr>
 				<td style="padding:2px;"><label>Mẫu liên kết một tin (<span class="require">*</span>)</label></td>
-				<td style="padding:2px;"><input name="extra" type="text" id="extra" style="width:60%;" class="form-control" value="{ITEM.extra}" /></td>
+				<td style="padding:2px;"><input name="extra" type="text" id="extra" style="width:60%;" class="form-control" value="{ITEM.extra}"  required="required"/></td>
 			</tr>
 			<tr>
 				<td style="padding:2px;"><label>Số tin lấy (<span class="require">*</span>)</label></td>
-				<td style="padding:2px;"><input name="count" type="text" id="count" style="width:60%;" class="form-control" value="{ITEM.count}" /></td>
+				<td style="padding:2px;"><input name="count" type="text" id="count" style="width:60%;" class="form-control" value="{ITEM.count}"  required="required"/></td>
 			</tr>
 			<tr>
 				<td style="padding:2px;"><label>Chèn vào danh mục</label></td>
@@ -94,5 +94,9 @@
 			</tr>
 		</table>
 	</div>
+	<button type="submit" class="btn btn-success">{LANG.save}</button>
+	<a href="{BUTTON.temp}&id={ITEM.id}" style="color:#000;"><button type="button" class="btn btn-primary">Cấu trúc</button></a>
+	<a href="{NV_BASE_ADMINURL}index.php?{NV_NAME_VARIABLE}={MODULE_NAME}" style="color:#000;"><button type="button" class="btn btn-primary">Danh sách</button></a>
+	<a href="{BUTTON.add}" style="color:#000;"><button class="btn btn-primary" type="button">Thêm mẫu</button></a>
 </form>
 <!-- END: main -->

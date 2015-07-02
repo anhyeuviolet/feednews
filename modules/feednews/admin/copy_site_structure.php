@@ -1,10 +1,11 @@
 <?php
 
 /**
- * @Project FEEDNEWS 3.2.01
- * @Author FORUM.NUKEVIET.VN
-
- * @Created Wed, 01 Jul 2015 18:00:00 GMT
+ * @Project FEEDNEWS ON NUKEVIET 4.x
+ * @Author KENNYNGUYEN (nguyentiendat713@gmail.com)
+ * @Copyright (C) 2014 VINADES.,JSC. All rights reserved
+ * @License GNU/GPL version 2 or any later version
+ * @Createdate 07/30/2013 10:27
  */
 
 if ( ! defined( 'NV_IS_FILE_ADMIN' ) ) die( 'Stop!!!' );
@@ -26,7 +27,7 @@ $query_id=$db->query( $query );
 $site=$query_id->fetch();
 
 $error="";
-if($id and $site){
+if(($id > 0) && ($site)){
 		// chèn dữ liệu vào bảng _site
 	$stmt = $db->prepare( 'INSERT INTO ' . NV_PREFIXLANG . '_' . $module_data. '_site SET
 		name=:name,
