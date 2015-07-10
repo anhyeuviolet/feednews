@@ -52,3 +52,16 @@ $sql_create_module[] = "CREATE TABLE ".$db_config['prefix']."_".$lang."_".$modul
   PRIMARY KEY (id)
 ) ENGINE=MyISAM;";
 
+// Dump data
+$sql_create_module[] = "INSERT INTO ".$db_config['prefix']."_".$lang."_".$module_data."_site_structure (id, site_id, field_name, extra, element_delete, string_delete) VALUES
+(1, 1, 'title', 'h1', '', ''),
+(2, 1, 'hometext', 'short_intro txt_666', '', ''),
+(3, 1, 'bodyhtml', '.fck_detail', '', ''),
+(4, 1, 'homeimgalt', 'h1', '', '')";
+
+$sql_create_module[] = "INSERT INTO ".$db_config['prefix']."_".$lang."_".$module_data."_site (
+id, name, host, url, extra, count, table_name, get_image, image_pattern, image_content_left, image_content_right, pattern_bound, catid, status, page_num, image_dir, sourceid, begin, end, bid, cat_title) 
+VALUES
+(1, 'Số hoá - VNEXPRESS', 'http://sohoa.vnexpress.net/', 'http://sohoa.vnexpress.net/tin-tuc/san-pham',
+ 'a.txt_link', '5', 'news', 1, '.thumb img', '', '', '.block_image_news', 2, 1, '', '', 1, '.block_image_news width_common',
+ 'news', '2', 'Sản phẩm')";
