@@ -59,8 +59,8 @@
 			<tr>
 				<td style="padding:2px;"><label>Lấy ảnh đại diện về host</label></td>
 				<td style="padding:2px;"><select name="get_image" id="get_image" class="form-control w200">
-				<option value="1" {ITEM.get_image0}>Có</option>
-				<option value="0" {ITEM.get_image1}>Không</option>
+				<option value="1" {ITEM.get_image1}>Có</option>
+				<option value="0" {ITEM.get_image0}>Không</option>
 				</select></td>
 			</tr>
 			<tr>
