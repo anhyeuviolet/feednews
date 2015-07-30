@@ -81,10 +81,11 @@ if($cmd=='feed' and $temps = $nv_Request->get_typed_array( 'temps', 'post', '' )
 				$pattern_bound = $site['pattern_bound'];
 				$pattern_link = $site['extra'];
 				$pattern_img = $site['image_pattern'];
-				$folder=NV_ROOTDIR."/files/".$table_name."/thumb"; // Thư mục chứa ảnh thumb
+				$table_upload = change_alias($table_name);
+				$folder=NV_ROOTDIR .'/'. NV_FILES_DIR .'/'. $table_upload."/thumb"; // Thư mục chứa ảnh thumb
 				if(!is_dir($folder)) @mkdir($folder,0755,true);
 				
-				$folder_upload=NV_ROOTDIR."/uploads/".$table_name."/".date('Y_m'); // Thư mục chứa ảnh upload trên server
+				$folder_upload=NV_ROOTDIR .'/'. NV_UPLOADS_DIR .'/'. $table_upload."/".date('Y_m'); // Thư mục chứa ảnh upload trên server
 				if(!is_dir($folder_upload)) @mkdir($folder_upload,0755,true);
 				
 				if($pattern_bound){
