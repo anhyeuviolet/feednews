@@ -5,7 +5,7 @@
  * @Author KENNYNGUYEN (nguyentiendat713@gmail.com)
  * @Copyright (C) 2014 VINADES.,JSC. All rights reserved
  * @License GNU/GPL version 2 or any later version
- * @Createdate 07/30/2013 10:27
+ * @Createdate 08/25/2015 10:27
  */
 
 if ( ! defined( 'NV_IS_FILE_ADMIN' ) ) die( 'Stop!!!' );
@@ -82,7 +82,7 @@ if($cmd=='feed' and $temps = $nv_Request->get_typed_array( 'temps', 'post', '' )
 				$pattern_link = $site['extra'];
 				$pattern_img = $site['image_pattern'];
 				$table_upload = change_alias($table_name);
-				$folder=NV_ROOTDIR .'/'. NV_FILES_DIR .'/'. $table_upload."/thumb"; // Thư mục chứa ảnh thumb
+				$folder = NV_ROOTDIR .'/'. NV_FILES_DIR .'/'. $table_upload."/".date('Y_m'); // Thư mục chứa ảnh thumb
 				if(!is_dir($folder)) @mkdir($folder,0755,true);
 				
 				$folder_upload=NV_ROOTDIR .'/'. NV_UPLOADS_DIR .'/'. $table_upload."/".date('Y_m'); // Thư mục chứa ảnh upload trên server
@@ -278,8 +278,9 @@ if($cmd=='feed' and $temps = $nv_Request->get_typed_array( 'temps', 'post', '' )
 												}
 											}
 											// Viết lại đường dẫn ảnh trong nội dung
-											if(isset($item['bodyhtml']) and $item['bodyhtml']){
-												$item['bodyhtml']=str_replace($site['image_content_left'],$site['image_content_right'],$item['bodyhtml']);
+											if(isset($item['bodyhtml']) and $item['bodyhtml'])
+											{
+												$item['bodyhtml'] = str_replace($site['image_content_left'],$site['image_content_right'],$item['bodyhtml']);
 											}
 											$item['catid']= $site['catid'];
 											$item['bid'] = $site['bid'];
@@ -288,10 +289,7 @@ if($cmd=='feed' and $temps = $nv_Request->get_typed_array( 'temps', 'post', '' )
 											$item['sourcetext'] = $sourcetext_c;
 											$data_result[] = $item;
 										}
-										//echo '<pre>';
-										//print_r($item);
 									}
-									//debug($data_result);
 								}else{
 									$error.="<div>Không tìm thấy mẫu cấu trúc chi tiết <strong>".$link."</strong></div>";
 								}
@@ -325,7 +323,16 @@ if($cmd=='feed' and $temps = $nv_Request->get_typed_array( 'temps', 'post', '' )
 				$sourceid=(isset($item['sourceid']) and $item['sourceid'])?$item['sourceid']:0;
 				
 				$homeimgfile=(isset($item['homeimgfile']) and $item['homeimgfile'])?$item['homeimgfile']:'';
-				$homeimgthumb=(isset($item['image_url']) and $item['image_url'])?'thumb/'.basename($item['image_url']):'';
+				
+				if (isset($item['image_url']) and $item['image_url']){
+					$homeimgthumb = 1;
+				}
+				else if ( isset($item['image_url']) and nv_is_url($item['image_url']))
+				{
+					$homeimgthumb = 3;
+				}
+				// (isset($item['image_url']) and $item['image_url'])?'thumb/'.basename($item['image_url']):'';
+				
 				$homeimgalt=(isset($item['homeimgalt']) and $item['homeimgalt'])?nv_htmlspecialchars(str_replace('\'','"',strip_tags($item['homeimgalt']))):'';
 				$author=(isset($item['author']) and $item['author'])?nv_htmlspecialchars(str_replace('\'','"',strip_tags($item['author']))):'';
 				
@@ -351,7 +358,7 @@ if($cmd=='feed' and $temps = $nv_Request->get_typed_array( 'temps', 'post', '' )
 				{
 					// Lưu vào NV_PREFIXLANG."_".$table_name."_".$item['catid']
 					$query="INSERT INTO ".NV_PREFIXLANG."_".$table_name."_".$item['catid']." (id, catid, listcatid, topicid, admin_id, author, sourceid, addtime, edittime, status, publtime, exptime, archive, title, alias, hometext, homeimgfile, homeimgalt, homeimgthumb, inhome, allowed_comm, allowed_rating, hitstotal, hitscm, total_rating, click_rating) VALUES 
-					(".$id.", ".$item['catid'].", '".$item['catid']."', 0, 1, '".$author."', ".$sourceid.", ".$addtime.", ".$addtime.", ".$item['status'].", ".$addtime.", 0, 2, '".$item['title']."', '".$item['alias']."', '".$hometext."', '".$homeimgfile."', '".$homeimgalt."', 2, 1, 2, 1, 1, 0, 0, 0);";
+					(".$id.", ".$item['catid'].", '".$item['catid']."', 0, 1, '".$author."', ".$sourceid.", ".$addtime.", ".$addtime.", ".$item['status'].", ".$addtime.", 0, 2, '".$item['title']."', '".$item['alias']."', '".$hometext."', '".$homeimgfile."', '".$homeimgalt."', '".$homeimgthumb."', 1, 2, 1, 1, 0, 0, 0);";
 					$db->query( $query );
 					
 					// Lưu vào NV_PREFIXLANG."_".$table_name."_bodyhtml_*"
