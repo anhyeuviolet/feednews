@@ -324,14 +324,17 @@ if($cmd=='feed' and $temps = $nv_Request->get_typed_array( 'temps', 'post', '' )
 				
 				$homeimgfile=(isset($item['homeimgfile']) and $item['homeimgfile'])?$item['homeimgfile']:'';
 				
-				if (isset($item['image_url']) and $item['image_url']){
-					$homeimgthumb = 1;
-				}
-				else if ( isset($item['image_url']) and nv_is_url($item['image_url']))
-				{
+				if (!empty($homeimgfile)and nv_is_url($homeimgfile)){
 					$homeimgthumb = 3;
 				}
-				// (isset($item['image_url']) and $item['image_url'])?'thumb/'.basename($item['image_url']):'';
+				elseif ( !empty($homeimgfile))
+				{
+					$homeimgthumb = 1;
+				}
+				else
+				{
+					$homeimgthumb = '';
+				}
 				
 				$homeimgalt=(isset($item['homeimgalt']) and $item['homeimgalt'])?nv_htmlspecialchars(str_replace('\'','"',strip_tags($item['homeimgalt']))):'';
 				$author=(isset($item['author']) and $item['author'])?nv_htmlspecialchars(str_replace('\'','"',strip_tags($item['author']))):'';
