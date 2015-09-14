@@ -2,16 +2,16 @@
 <form name="EditDeclarationSite" id="EditDeclarationSite" method="post">
 	<input type="hidden" name="cmd" id="cmd" value="1" />
 	<button type="submit" class="btn btn-success">{LANG.save}</button>
-	<a href="{BUTTON.edit}&id={ITEM.id}" style="color:#000;"><button type="button" class="btn btn-primary">Sửa mẫu</button></a>
-	<a href="{NV_BASE_ADMINURL}index.php?{NV_NAME_VARIABLE}={MODULE_NAME}" style="color:#000;"><button type="button" class="btn btn-primary">Danh sách</button></a>
-	<a href="{BUTTON.add}" style="color:#000;"><button type="button" class="btn btn-primary">Thêm mẫu</button></a>
+	<a href="{BUTTON.edit}&id={ITEM.id}" style="color:#000;"><button type="button" class="btn btn-primary">{LANG.edit_site_structure}</button></a>
+	<a href="{NV_BASE_ADMINURL}index.php?{NV_NAME_VARIABLE}={MODULE_NAME}" style="color:#000;"><button type="button" class="btn btn-primary">{LANG.structure_list}</button></a>
+	<a href="{BUTTON.add}" style="color:#000;"><button type="button" class="btn btn-primary">{LANG.add_site_structure}</button></a>
 	<div class="table-responsive" style="margin-top: 10px">
 		<table class="table table-striped table-bordered table-hover">
             <tr bgcolor="#f2f2f2">
-                <th style="padding:5px;">Trường dữ liệu</th>
-                <th style="padding:5px; width:30%;">Mẫu cần lấy</th>
-                <th style="padding:5px; width:30%;">Mẫu đối tượng cần xóa (cách nhau bởi dấu phẩy ",")</th>
-                <th style="padding:5px; width:30%;">Chuỗi ký tự cần xóa (cách nhau bởi dấu phẩy ",")</th>
+                <th style="padding:5px;">{LANG.data_field}</th>
+                <th style="padding:5px; width:30%;">{LANG.pattern_get}</th>
+                <th style="padding:5px; width:30%;">{LANG.pattern_remove}</th>
+                <th style="padding:5px; width:30%;">{LANG.string_remove}</th>
             </tr>
 			
 			<!-- BEGIN: field_list -->
@@ -29,7 +29,7 @@
 <!-- BEGIN: error -->
 	<div class="quote" style="width: 780px;">        
 		<blockquote class="error">
-			<span style="font-size:16px">Không tồn tại mẫu này</span>        
+			<span style="font-size:16px">{LANG.wrong_sample}</span>        
 		</blockquote>
 	</div>
 

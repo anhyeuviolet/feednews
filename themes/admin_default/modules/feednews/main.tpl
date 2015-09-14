@@ -1,18 +1,20 @@
 <!-- BEGIN: main -->
 <!-- BEGIN: complete -->
-<div class="alert alert-info"><strong>Thông báo</strong>: đã lấy được <strong>{TOTAL}</strong> tin!</div><div class="clear"></div>
+<div class="alert alert-info"><strong>{LANG.notice}</strong>: đã lấy được <strong>{TOTAL}</strong> tin!</div>
+<div class="clear"></div>
 <!-- END: complete -->
 
 <!-- BEGIN: error -->
-<div class="alert alert-danger"><strong>Error</strong>: <blockquote class="error">"{ERROR}"</blockquote></div><div class="clear"></div>
+<div class="alert alert-danger"><strong>{LANG.error}</strong>: {ERROR}</div>
+<div class="clear"></div>
 <!-- END: error -->
 
 <form name="feedForm" method="post">
 <input type="hidden" name="cmd" value="feed" id="cmd" />
 	<div>
-		<button type="button" class="btn btn-success" onclick="feedNews();">Lấy tin</button>
-		<a href="{BUTTON.add}" style="color:#000;"><button type="button" class="btn btn-primary">Thêm mẫu</button></a>
-		<button type="button" class="btn btn-danger" onclick="deletePattern();">Xóa mẫu</button>
+		<button type="button" class="btn btn-success" onclick="feedNews();">{LANG.get_news}</button>
+		<a href="{BUTTON.add}" style="color:#000;"><button type="button" class="btn btn-primary">{LANG.add_site_structure}</button></a>
+		<button type="button" class="btn btn-danger" onclick="deletePattern();">{LANG.remove_site_structure}</button>
         <div class="table-responsive" style="margin-top: 10px">
 			<table class="table table-striped table-bordered table-hover">
         	<tr bgcolor="#f2f2f2">
@@ -29,17 +31,17 @@
                 <td style="padding:5px;">{ROW.cat_title} - {ROW.table_name}</td>
                 <td style="padding:5px;">{ROW.status}</td>
 				<td style="padding:5px;" align="center" nowrap width="1%">
-					<a href="{BUTTON.edit}&id={ROW.id}">Sửa</a> |
+					<a href="{BUTTON.edit}&id={ROW.id}">{LANG.edit_site_structure}</a> |
 					<a href="{BUTTON.temp}&id={ROW.id}">Cấu trúc</a> |
-					<a href="{BUTTON.copy}&id={ROW.id}">Nhân bản</a>
+					<a href="{BUTTON.copy}&id={ROW.id}">{LANG.copy_site_structure}</a>
 				</td>
             	</tr>
 			<!-- END: list_pattern -->
         </table>
         </div>
-		<button type="button" class="btn btn-success" onclick="feedNews();">Lấy tin</button>
-		<a href="{BUTTON.add}" style="color:#000;"><button type="button" class="btn btn-primary">Thêm mẫu</button></a>
-		<button type="button" class="btn btn-danger" onclick="deletePattern();">Xóa mẫu</button>
+		<button type="button" class="btn btn-success" onclick="feedNews();">{LANG.get_news}</button>
+		<a href="{BUTTON.add}" style="color:#000;"><button type="button" class="btn btn-primary">{LANG.add_site_structure}</button></a>
+		<button type="button" class="btn btn-danger" onclick="deletePattern();">{LANG.remove_site_structure}</button>
 	</div>
 </form>
 <!-- END: main -->

@@ -32,12 +32,12 @@ $__site=NV_PREFIXLANG . "_" . $module_name . "_site";
 $__site_structure=NV_PREFIXLANG . "_" . $module_name . "_site_structure";
 
 $query = "SELECT " .$__site.".* FROM ".$__site." ORDER BY ".$__site.".name";
-$site_id=$db->query( $query );
-$status=array(0=>'Chờ duyệt',1=>'Đăng bài ngay');
+$site_id = $db->query( $query );
+$status = array(0=>'Chờ duyệt',1=>'Đăng bài ngay');
 $cmd = $nv_Request->get_string( 'cmd', 'post' );
-$imgext=array('jpg'=>'jpg','jpeg'=>'jpeg','gif'=>'gif','png'=>'png','bmp'=>'bmp');
-$error="";
-$total=0;
+$imgext = array('jpg'=>'jpg','jpeg'=>'jpeg','gif'=>'gif','png'=>'png','bmp'=>'bmp');
+$error = array();
+$total = 0;
 
 if($cmd=='delete' and $temps = $nv_Request->get_typed_array( 'temps', 'post', '' )){
 	foreach($temps as $id){
@@ -75,7 +75,8 @@ if($cmd=='feed' and $temps = $nv_Request->get_typed_array( 'temps', 'post', '' )
 			}
 
 			$html=html_no_comment($site['url']);
-			if($html){
+			if($html)
+			{
 				$html=str_get_html($html);
 				$host = $site['host'];
 				$pattern_bound = $site['pattern_bound'];
@@ -88,243 +89,185 @@ if($cmd=='feed' and $temps = $nv_Request->get_typed_array( 'temps', 'post', '' )
 				$folder_upload=NV_ROOTDIR .'/'. NV_UPLOADS_DIR .'/'. $table_upload."/".date('Y_m'); // Thư mục chứa ảnh upload trên server
 				if(!is_dir($folder_upload)) @mkdir($folder_upload,0755,true);
 				
-				if($pattern_bound){
-					//debug($pattern_bound);
+				if($pattern_bound)
+				{
 					$arr_pattern_bound = explode(',',$pattern_bound);
 					$arr_pattern_link = explode(',',$pattern_link);
 					$arr_pattern_img = explode(',',$pattern_img);
 					
-					for($j=0;$j<count($arr_pattern_bound);$j++){
+					for($j=0;$j<count($arr_pattern_bound);$j++)
+					{
 						$pattern_bound=$arr_pattern_bound[$j];
 						$pattern_link=(isset($arr_pattern_link[$j]) and $arr_pattern_link[$j])?$arr_pattern_link[$j]:$arr_pattern_link[0];
 						$pattern_img=(isset($arr_pattern_img[$j]) and $arr_pattern_img[$j])?$arr_pattern_img[$j]:$arr_pattern_img[0];
-						//debug($pattern_bound);
 						$max_item=$site['count']; $num=0;
-						foreach($html->find($pattern_bound) as $bound)
-						{
-							if($num==$max_item) break; $num++;
-							foreach($bound->find($pattern_link) as $link){
-								$link = check_link($link->getAttribute('href'),$host);
-							}
-							//echo $link.'<br>';
-							// parse row
-							$html_detail=html_no_comment($link);
-							if($html_detail){
-								$html_detail=str_get_html($html_detail);
-								$item = array();
-								if($pattern)
-								{
-									foreach($pattern as $key=>$value)
-									{
-										//echo '<pre>';
-										//print_r($value);
-										$element_delete = $value['element_delete'];
-										//echo $element_delete.'<br>';
-										if($detail_pattern = $value['extra']){
-											// Nếu mẫu cần lấy có dạng đối tượng con có thứ tự {nth} của một đối tượng, 
-											if(preg_match("/{([^*]+)}/", $detail_pattern, $child)){
-												$detail_pattern=substr($detail_pattern,0,strpos($detail_pattern,'{'));
-												// Nếu có chỉ định đối tượng con cụ thể dạng childelement-nth
-												if(strpos($child[1],'-')){
-													$el=explode('-',$child[1]);
-													foreach($html_detail->find($detail_pattern) as $element)
-													{
-														if($element_delete){
-															$arr = explode(',',$element_delete);
-															for($i=0;$i<count($arr);$i++){
-																if(preg_match("/{([^*]+)}/", $arr[$i], $matches)){
-																	// Nếu mẫu đối tượng cần xóa có dạng {nth} thì xóa đối tượng con có thứ tự là nth
-																	$element->find($el[0],$el[1])->children($matches[1])->outertext='';
-																}else{
-																	foreach($element->find($arr[$i]) as $e){
-																		$e->outertext='';
-																	}
-																}
-															}
-														}
-														// Thông tin lấy được
-														if($value['field_name']=='bodyhtml'){
-															$item[$value['field_name']] = stripwhitespace(nv_convert($element->find($el[0],$el[1])->innertext));
-														}else{
-															$item[$value['field_name']] = stripwhitespace(nv_convert(strip_tags($element->find($el[0],$el[1])->innertext)));
-														}
-														break;
-													}
-												// Chỉ có dạng {nth}, nghĩa là lấy đối tượng con gần nhất có chỉ số là nth
-												}else{
-													foreach($html_detail->find($detail_pattern) as $element)
-													{
-														// Xóa mẫu đối tượng đã khai báo
-														if($element_delete){
-															$arr = explode(',',$element_delete);
-															for($i=0;$i<count($arr);$i++){
-																if(preg_match("/{([^*]+)}/", $arr[$i], $matches)){
-																	// Nếu mẫu đối tượng cần xóa có dạng {nth} thì xóa đối tượng con có thứ tự là nth
-																	$element->children($child[1])->children($matches[1])->outertext='';
-																}else{
-																	foreach($element->find($arr[$i]) as $e){
-																		$e->outertext='';
-																	}
-																}
-															}
-														}
-														// Thông tin lấy được
-														if($value['field_name']=='bodyhtml'){
-															$item[$value['field_name']] = stripwhitespace(nv_convert($element->children($child[1])->innertext));
-														}else{
-															$item[$value['field_name']] = stripwhitespace(nv_convert(strip_tags($element->children($child[1])->innertext)));
-														}
-														break;
-													}
-												}
-											}else{
-												foreach($html_detail->find($detail_pattern) as $element)
-												{
-													// Xóa mẫu đối tượng đã khai báo
-													if($element_delete){
-														$arr = explode(',',$element_delete);
-														for($i=0;$i<count($arr);$i++){
-															if(preg_match("/{([^*]+)}/", $arr[$i], $matches)){
-																// Nếu mẫu đối tượng cần xóa có dạng {nth} thì xóa đối tượng con có thứ tự là nth
-																$element->children($matches[1])->outertext='';
-															}else{
-																foreach($element->find($arr[$i]) as $e){
-																	$e->outertext='';
-																}
-															}
-														}
-													}
-													// Thông tin lấy được
-													if($value['field_name']=='bodyhtml'){
-														$item[$value['field_name']] = stripwhitespace(nv_convert($element->innertext));
-													}else{
-														$item[$value['field_name']] = stripwhitespace(nv_convert(strip_tags($element->innertext)));
-													}
-													break;
-												}
-											}
-										}
-										// Xóa chuỗi ký tự đã khai báo
-										if($string_delete = $value['string_delete']){
-											$arr_string_delete = explode(',',$string_delete);
-											for($s=0;$s<count($arr_string_delete);$s++){
-												$item[$value['field_name']]=str_replace($arr_string_delete[$s],'',$item[$value['field_name']]);
-											}
-										}
-									}
-									//debug($item);
-									if(isset($item['title']) and $item['title'])
-									{
-										$duplicate=false;
-										$item['title']=nv_htmlspecialchars(str_replace('\'','"',strip_tags($item['title'])));
-										$item['alias']=change_alias($item['title']);
-										// Kiểm tra trùng tin bài
-										$query="SELECT id FROM ".NV_PREFIXLANG."_".$table_name."_rows WHERE alias='".$item['alias']."'";
-										$query_id=$db->query( $query );
-										if( $query_id->fetch( 3 ) ){ $duplicate=true; }
-										if(isset($data_result) and $data_result){
-											foreach($data_result as $data){
-												if($data['alias']==$item['alias']){
-													$duplicate=true;
-												}
-											}
-										}
-										if($duplicate){
-											$num = $num - 1;
-										}
-										else if(!$duplicate){
-											// Lấy ảnh đại diện
-											$items = $bound->find($pattern_img);
-											if($items and count($items)){
-												foreach($items as $img){
-													$image_url=$img->src;
-												}
-												$source = check_link($image_url,$site['host']);
-												if($site['get_image']){
-													$basename = basename($source);
-													foreach($imgext as $ext){
-														if($pos=strpos($basename,$ext)){
-															$basename=substr($basename,0,$pos+strlen($ext));
-															break;
-														}
-													}
-													// Thư mục chứa ảnh thumb
-													if(file_exists($folder.'/'.$basename)){
-														$dest = $folder.'/'.time().'_'.$basename;
-													}else{
-														$dest = $folder.'/'.$basename;
-													}
 
-													if(file_put_contents($dest, file_get_contents($source)))
+						if($html->find($pattern_bound))
+						{
+							foreach($html->find($pattern_bound) as $bound)
+							{
+								if($num==$max_item) break; $num++;
+								foreach($bound->find($pattern_link) as $link)
+								{
+									$link = check_link($link->getAttribute('href'),$host);
+								}
+								$html_detail = html_no_comment($link);
+								if($html_detail)
+								{
+									$html_detail = str_get_html($html_detail);
+									$item = array();
+									if($pattern)
+									{
+										foreach($pattern as $key=>$value)
+										{
+											// Dung func lay bodyhtml
+											$item = get_html_body($html_detail, $value, $item);
+										}
+										//debug($item);
+										if(isset($item['title']) and $item['title'])
+										{
+											$duplicate = false;
+											$item['title']=nv_htmlspecialchars(str_replace('\'','"',strip_tags($item['title'])));
+											$item['alias']=change_alias($item['title']);
+											// Kiểm tra trùng tin bài
+											$query = "SELECT id FROM ".NV_PREFIXLANG."_".$table_name."_rows WHERE alias='".$item['alias']."'";
+											$query_id = $db->query( $query );
+											if( $query_id->fetch( 3 ) ){ $duplicate=true;}
+											if(isset($data_result) and $data_result)
+											{
+												foreach($data_result as $data)
+												{
+													if($data['alias']==$item['alias'])
 													{
-														$site['image_url'] = $dest;
-														// copy ảnh sang thư mục upload trên server
-														if(file_exists($folder_upload.'/'.$basename)){
-															$basename = time().'_'.$basename;
-														}
-														$copyto = $folder_upload.'/'.$basename;
-														if(copy($dest, $copyto)){
-															$site['homeimgfile'] = date('Y_m')."/".$basename;
-														}
-													}else{
-														$site['image_url'] = '';
-														$site['homeimgfile'] = '';
+														$duplicate=true;
 													}
-													
-													if(isset($site['image_url']) and file_exists($site['image_url'])) $item['image_url'] = $site['image_url'];
-													if(isset($copyto) and file_exists($copyto)) $item['homeimgfile'] = $site['homeimgfile'];
-												}else{
-													$item['homeimgfile']=str_replace(' ','%20',$source);
 												}
 											}
-											// Viết lại đường dẫn ảnh trong nội dung
-											if(isset($item['bodyhtml']) and $item['bodyhtml'])
+											if($duplicate)
 											{
-												$item['bodyhtml'] = str_replace($site['image_content_left'],$site['image_content_right'],$item['bodyhtml']);
+												$num = $num - 1;
 											}
-											$item['catid']= $site['catid'];
-											$item['bid'] = $site['bid'];
-											$item['status']= $site['status'];
-											$item['sourceid'] = $site['sourceid'];
-											$item['sourcetext'] = $sourcetext_c;
-											$data_result[] = $item;
+											else if(!$duplicate)
+											{
+												// Lấy ảnh đại diện
+												$items = $bound->find($pattern_img);
+												if($items and count($items)){
+													foreach($items as $img){
+														$image_url=$img->src;
+													}
+													$source = check_link($image_url,$site['host']);
+													if($site['get_image']){
+														$basename = basename($source);
+														foreach($imgext as $ext){
+															if($pos=strpos($basename,$ext)){
+																$basename=substr($basename,0,$pos+strlen($ext));
+																break;
+															}
+														}
+														// Thư mục chứa ảnh thumb
+														if(file_exists($folder.'/'.$basename)){
+															$dest = $folder.'/'.time().'_'.$basename;
+														}else{
+															$dest = $folder.'/'.$basename;
+														}
+
+														if(file_put_contents($dest, file_get_contents($source)))
+														{
+															$site['image_url'] = $dest;
+															// copy ảnh sang thư mục upload trên server
+															if(file_exists($folder_upload.'/'.$basename)){
+																$basename = time().'_'.$basename;
+															}
+															$copyto = $folder_upload.'/'.$basename;
+															if(copy($dest, $copyto)){
+																$site['homeimgfile'] = date('Y_m')."/".$basename;
+															}
+														}else{
+															$site['image_url'] = '';
+															$site['homeimgfile'] = '';
+														}
+														
+														if(isset($site['image_url']) and file_exists($site['image_url'])) $item['image_url'] = $site['image_url'];
+														if(isset($copyto) and file_exists($copyto)) $item['homeimgfile'] = $site['homeimgfile'];
+													}else{
+														$item['homeimgfile']=str_replace(' ','%20',$source);
+													}
+												}
+												// Viết lại đường dẫn ảnh trong nội dung
+												if(isset($item['bodyhtml']) and $item['bodyhtml'])
+												{
+													$item['bodyhtml'] = str_replace($site['image_content_left'],$site['image_content_right'],$item['bodyhtml']);
+												}
+												$item['catid']= $site['catid'];
+												$item['bid'] = $site['bid'];
+												$item['status']= $site['status'];
+												$item['sourceid'] = $site['sourceid'];
+												$item['sourcetext'] = $sourcetext_c;
+												$data_result[] = $item;
+											}
 										}
 									}
-								}else{
-									$error.="<div>Không tìm thấy mẫu cấu trúc chi tiết <strong>".$link."</strong></div>";
+									else
+									{
+										$error[] = $lang_module['error_detail_html_parse'].' '.$link;
+									}
+									$html_detail->clear(); 
+									unset($html_detail);
 								}
-								$html_detail->clear(); 
-								unset($html_detail);
-							}else{
-								$error.="<div>Không phân tích được cấu trúc HTML của trang chi tiết <strong>".$link."</strong></div>";
+								else
+								{
+									$error[] = $lang_module['error_main_html_parse'].' '.$link;
+								}
 							}
 						}
+						else
+						{
+							$error[] = $lang_module['error_main_html_parse'].' '.$site['url'];
+						}
 					}
-				}else{
-					$error.="<div>Không tìm thấy mẫu bao ngoài một đối tượng</div>";
+				}
+				else
+				{
+					$error[] = $lang_module['error_html_outside'];
 				}
 				$html->clear(); 
 				unset($html);
-			}else{
-				$error.="<div>Không phân tích được cấu trúc HTML của trang nguồn <strong>".$site['url']."</strong></div>";
+			}
+			else
+			{
+				$error[] = $lang_module['error_html_die'].' '.$site['url'];
 			}
 		}
 		//var_dump($data_result); die();
 		//debug($data_result);
-		if($data_result){
+		if($data_result)
+		{
 			$total=sizeof($data_result);
 			foreach($data_result as $item){
-				$addtime=NV_CURRENTTIME-mt_rand(60,1000);
-				$hometext=(isset($item['hometext']) and $item['hometext'])?nv_htmlspecialchars(str_replace('\'','"',strip_tags($item['hometext']))):'';
-				$item['bodyhtml']=defined( 'NV_EDITOR' ) ? nv_nl2br( $item['bodyhtml'], '' ) : nv_nl2br( nv_htmlspecialchars( strip_tags( $item['bodyhtml'] ) ), '<br />' );
-				$bodyhtml=(isset($item['bodyhtml']) and $item['bodyhtml'])?str_replace('\'','"',$item['bodyhtml']):'';
-				$bodytext=nv_news_get_bodytext($bodyhtml);
+				$addtime = NV_CURRENTTIME-mt_rand(60,1000);
+				
+				$hometext =(isset($item['hometext']) and $item['hometext'])?nv_htmlspecialchars(str_replace('\'','"',strip_tags($item['hometext']))):'';
+				if(isset($item['bodyhtml']) & !empty($item['bodyhtml']))
+				{
+					$item['bodyhtml']=defined( 'NV_EDITOR' ) ? nv_nl2br( $item['bodyhtml'], '' ) : nv_nl2br( nv_htmlspecialchars( strip_tags( $item['bodyhtml'] ) ), '<br />' );
+					$bodyhtml=(isset($item['bodyhtml']) and $item['bodyhtml'])?str_replace('\'','"',$item['bodyhtml']):'';
+					$bodytext=nv_news_get_bodytext($bodyhtml);
+				}
+				else
+				{
+					$item['bodyhtml'] = $lang_module['updating_content'];
+					$item['bodyhtml'] = defined( 'NV_EDITOR' ) ? nv_nl2br( $item['bodyhtml'], '' ) : nv_nl2br( nv_htmlspecialchars( strip_tags( $item['bodyhtml'] ) ), '<br />' );
+					$bodyhtml=(isset($item['bodyhtml']) and $item['bodyhtml'])?str_replace('\'','"',$item['bodyhtml']):'';
+					$bodytext=nv_news_get_bodytext($bodyhtml);
+					$error[] = $lang_module['error_get_content'].' '.$item['title'];
+				}
 				$sourcetext=(isset($item['sourcetext']) and $item['sourcetext'])?nv_htmlspecialchars(str_replace('\'','"',strip_tags($item['sourcetext']))):'';
 				$sourceid=(isset($item['sourceid']) and $item['sourceid'])?$item['sourceid']:0;
 				
 				$homeimgfile=(isset($item['homeimgfile']) and $item['homeimgfile'])?$item['homeimgfile']:'';
 				
-				if (!empty($homeimgfile)and nv_is_url($homeimgfile)){
+				if (!empty($homeimgfile)and nv_is_url($homeimgfile))
+				{
 					$homeimgthumb = 3;
 				}
 				elseif ( !empty($homeimgfile))
@@ -406,7 +349,8 @@ if($cmd=='feed' and $temps = $nv_Request->get_typed_array( 'temps', 'post', '' )
 			// block
 			$bsql="select * from " . NV_PREFIXLANG . "_" . $table_name . "_block_cat";
 			$bquery_id=$db->query( $bsql );
-			while( $bid_i = $bquery_id->fetch() ){
+			while( $bid_i = $bquery_id->fetch() )
+			{
 				$bid = intval( $bid_i['bid'] );
 				if( $bid > 0 )
 				{
@@ -437,17 +381,18 @@ if($total){
 	$xtpl->assign( 'TOTAL', $total );
 	$xtpl->parse( 'main.complete' );
 }
-if($error){
-	$xtpl->assign( 'ERROR', $error );
+if( ! empty( $error ) )
+{
+	$xtpl->assign( 'ERROR', implode( '<br />', $error ) );
 	$xtpl->parse( 'main.error' );
 }
 
-	while( $row = $site_id->fetch() )
-	{
-		$row['status'] = $status[$row['status']];
-		$xtpl->assign( 'ROW', $row );
-		$xtpl->parse( 'main.list_pattern' );
-	}
+while( $row = $site_id->fetch() )
+{
+	$row['status'] = $status[$row['status']];
+	$xtpl->assign( 'ROW', $row );
+	$xtpl->parse( 'main.list_pattern' );
+}
 
 $xtpl->parse( 'main' );
 $contents = $xtpl->text( 'main' );
