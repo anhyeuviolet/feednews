@@ -65,13 +65,7 @@ if($item){
 		$temp[$row['field_name']]=$row;
 	}
 
-	$field=array(
-	$lang_module['title'],
-	$lang_module['hometext'] ,
-	$lang_module['bodyhtml'] ,
-	$lang_module['homeimgalt'] ,
-	$lang_module['author']
-);
+	$field=array('title','hometext','bodyhtml','homeimgalt','author');
 	for($i=0;$i<sizeof($field);$i++){
 		$xtpl->assign( 'TEMP', array(
 			'extra' => ((isset($temp[$field[$i]]['extra']) and $temp[$field[$i]]['extra'])?$temp[$field[$i]]['extra']:''),
@@ -82,7 +76,8 @@ if($item){
 		$xtpl->parse( 'main.field_list' );
 	}
 	$xtpl->assign('ITEM',$item);
-}else
+}
+else
 {
 	$contents = $error;
 }
