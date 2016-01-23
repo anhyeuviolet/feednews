@@ -244,8 +244,12 @@ if($cmd=='feed' and $temps = $nv_Request->get_typed_array( 'temps', 'post', '' )
 													$image_url=$img->src;
 												}
 												$source = check_link($image_url,$site['host']);
+												$source = str_replace(' ', '%20', $source);
 												if($site['get_image']){
 													$basename = basename($source);
+													$basename = str_replace('%20', '-', $basename);
+													$basename = preg_replace('/[^A-Za-z0-9\-\.]/', '', $basename);
+													$basename = preg_replace('/-+/', '-', $basename);
 													foreach($imgext as $ext){
 														if($pos=strpos($basename,$ext)){
 															$basename=substr($basename,0,$pos+strlen($ext));
