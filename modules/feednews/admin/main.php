@@ -382,30 +382,10 @@ if($cmd=='feed' and $temps = $nv_Request->get_typed_array( 'temps', 'post', '' )
 					$db->query( $query );
 					
 					// check bodyhtml
-					$bodyhtml_table=NV_PREFIXLANG."_".$table_name."_bodyhtml_".ceil($id/2000);
-					$val = $db->query("select 1 from ".$bodyhtml_table."");
-					
-					if( empty($val) ){
-						$query = "CREATE TABLE ".$bodyhtml_table." (
-						  id int(11) unsigned NOT NULL,
-						  bodyhtml longtext NOT NULL,
-						  sourcetext varchar(255) NOT NULL DEFAULT '',
-						  imgposition tinyint(1) NOT NULL DEFAULT '1',
-						  copyright tinyint(1) NOT NULL DEFAULT '0',
-						  allowed_send tinyint(1) NOT NULL DEFAULT '0',
-						  allowed_print tinyint(1) NOT NULL DEFAULT '0',
-						  allowed_save tinyint(1) NOT NULL DEFAULT '0',
-						  PRIMARY KEY (id)
-						) ENGINE=MyISAM DEFAULT CHARSET=utf8";
-						$db->query( $query );
-					}
+					$bodyhtml_table=NV_PREFIXLANG."_".$table_name."_detail";
 					
 					$query="INSERT INTO ".$bodyhtml_table." (id, bodyhtml, sourcetext, imgposition, copyright, allowed_send, allowed_print, allowed_save) VALUES 
 					(".$id.", '".$bodyhtml."', '".$sourcetext."', 1, 0, 1, 1, 1)";
-					$db->query( $query );
-					
-					// Lưu vào NV_PREFIXLANG."_".$table_name."_bodytext"
-					$query="INSERT INTO ".NV_PREFIXLANG."_".$table_name."_bodytext (id, bodytext) VALUES (".$id.",'".$bodytext."')";
 					$db->query( $query );
 					
 					// Lưu vào NV_PREFIXLANG."_".$table_name."_block"
