@@ -24,20 +24,6 @@ function debug($array)
 	echo '</pre>';
 	exit();
 }
-function check_link($url,$host='')
-{
-	if((nv_is_url($url)===false) and (preg_match_all('/http:\/\/(.*)\.([a-z]+)\//',$host,$matches,PREG_SET_ORDER)))
-	{
-		while ($url{0}=='/'){
-			$url=substr($url,1);
-		}
-		if($matches[0][0]{strlen($matches[0][0])-1}!='/'){
-			$matches[0][0]=$matches[0][0].'/';
-		}
-		$url = $matches[0][0].$url;
-	}
-	return $url;
-}
 
 function _isCurl(){
     return function_exists('curl_version');
@@ -48,23 +34,7 @@ function _urlencode($url){
 	$output .= strpos("/:@&%=?.#", $url[$i]) === false ? urlencode($url[$i]) : $url[$i]; 
 	return $output;
 }
-function file_get_contents_curl($url) {
-	//$url=urlencode($url);
-	//debug($url);
-    $ch = curl_init();
 
-    curl_setopt($ch, CURLOPT_AUTOREFERER, TRUE);
-    curl_setopt($ch, CURLOPT_HEADER, 0);
-    curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-    curl_setopt($ch, CURLOPT_URL, $url);
-    //curl_setopt($ch, CURLOPT_FOLLOWLOCATION, TRUE);
-	curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 10);
-
-    $data = curl_exec($ch);
-    curl_close($ch);
-
-    return $data;
-}
 
 function html_no_comment($url) {
 	$url=_urlencode($url);

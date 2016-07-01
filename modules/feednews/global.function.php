@@ -925,20 +925,6 @@ function html_compress( $html )
 	return trim( $html );
 }
 
-// function delemptytag ($result)
-// {
-// $regexps = array (
-// '~<(\w+)\b[^\>]*>\s*</\\1>~',
-// '~<\w+\s*/>~'
-// );
-// do
-// {
-// $string = $result;
-// $result = preg_replace ($regexps, '', $string);
-// }
-// while ($result != $string);
-// return $result;
-// }
 function delemptytag( $html )
 {
 	$html = preg_replace( '/<[^\/>]*>([\s&nbsp;]?)*<\/[^>]*>/', ' ', $html );
@@ -1156,4 +1142,68 @@ function change( $text )
 	//$text = strip_tags($text);
 	//}
 	return $text;
+}
+
+
+function nv_remove_emptytag( $html )
+{
+	$html = preg_replace( '/<[^\/>]*>([\s&nbsp;]?)*<\/[^>]*>/', ' ', $html );
+	return $html;
+}
+
+function curl($url) {
+	$ch = @curl_init();
+	curl_setopt($ch, CURLOPT_URL, $url);
+	$head[] = "Connection: keep-alive";
+	$head[] = "Keep-Alive: 300";
+	$head[] = "Accept-Charset: ISO-8859-1,utf-8;q=0.7,*;q=0.7";
+	$head[] = "Accept-Language: en-us,en;q=0.5";
+	curl_setopt($ch, CURLOPT_USERAGENT, 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/37.0.2062.124 Safari/537.36');
+	curl_setopt($ch, CURLOPT_HTTPHEADER, $head);
+	curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+	curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, FALSE);
+	curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
+	curl_setopt($ch, CURLOPT_TIMEOUT, 60);
+	curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 60);
+	curl_setopt($ch, CURLOPT_FOLLOWLOCATION, TRUE);
+	curl_setopt($ch, CURLOPT_HTTPHEADER, array('Expect:'));
+	$page = curl_exec($ch);
+	curl_close($ch);
+	return $page;
+}
+
+function check_link($url,$host='')
+{
+	if((nv_is_url($url)===false) and (preg_match_all('/^(http|https|ftp|gopher)\:\/\/(.*)\.([a-z]+)/',$host,$matches,PREG_SET_ORDER)))
+	{
+		while ($url{0}=='/'){
+			$url=substr($url,1);
+		}
+		if($matches[0][0]{strlen($matches[0][0])-1}!='/'){
+			$matches[0][0]=$matches[0][0].'/';
+		}
+		$url = $matches[0][0].$url;
+	}
+	return $url;
+}
+
+function dom_html_file($url){
+	global $module_upload;
+	if( !empty($url)){
+		$me = curl($url);
+		$file = NV_UPLOADS_REAL_DIR . '/' . $module_upload . '/' . md5($url) . '.html';
+		$current = curl($url);
+		file_put_contents($file, $current);
+		$html = file_get_html($file);
+		unlink($file);
+		return $html;
+	}
+}
+
+function nv_get_firstimage( $contents ){
+	if( preg_match('/< *img[^>]*src *= *["\']?([^"\']*)/i', $contents, $img) ){
+		return $img[1];
+	}else{
+		return '';
+	}
 }

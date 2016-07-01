@@ -25,8 +25,6 @@ $xtpl->assign( 'BUTTON', array(
 	'temp' => NV_BASE_ADMINURL . 'index.php?' . NV_LANG_VARIABLE . '=' . NV_LANG_DATA . '&amp;' . NV_NAME_VARIABLE . '=' . $module_name . '&amp;' . NV_OP_VARIABLE . '=temp_site_structure',
 ) );
 
-
-
 $page_title = $lang_module['main'];
 $__site=NV_PREFIXLANG . "_" . $module_name . "_site";
 $__site_structure=NV_PREFIXLANG . "_" . $module_name . "_site_structure";
@@ -74,14 +72,15 @@ if($cmd=='feed' and $temps = $nv_Request->get_typed_array( 'temps', 'post', '' )
 				$pattern[$row['id']] = $row;
 			}
 
-			$html = html_no_comment($site['url']);
+			// $html = html_no_comment($site['url']);
+			$html = dom_html_file($site['url']);
 			if($html)
 			{
 				$html=str_get_html($html);
 				$host = $site['host'];
-				$pattern_bound = $site['pattern_bound'];
-				$pattern_link = $site['extra'];
-				$pattern_img = $site['image_pattern'];
+				$pattern_bound = html_entity_decode($site['pattern_bound']);
+				$pattern_link = html_entity_decode($site['extra']);
+				$pattern_img = html_entity_decode($site['image_pattern']);
 				$table_upload = change_alias($table_name);
 				$folder = NV_ROOTDIR .'/'. NV_FILES_DIR .'/'. $table_upload."/".date('Y_m'); // Thư mục chứa ảnh thumb
 				if(!is_dir($folder)) @mkdir($folder,0755,true);
@@ -109,7 +108,9 @@ if($cmd=='feed' and $temps = $nv_Request->get_typed_array( 'temps', 'post', '' )
 							}
 							//echo $link.'<br>';
 							// parse row
-							$html_detail=html_no_comment($link);
+							
+							//$html_detail=html_no_comment($link);
+							$html_detail=dom_html_file($link);
 							if($html_detail){
 								$html_detail=str_get_html($html_detail);
 								$item = array();
@@ -117,17 +118,14 @@ if($cmd=='feed' and $temps = $nv_Request->get_typed_array( 'temps', 'post', '' )
 								{
 									foreach($pattern as $key=>$value)
 									{
-										//echo '<pre>';
-										//print_r($value);
 										$element_delete = $value['element_delete'];
-										//echo $element_delete.'<br>';
 										if($detail_pattern = $value['extra']){
 											// Nếu mẫu cần lấy có dạng đối tượng con có thứ tự {nth} của một đối tượng, 
 											if(preg_match("/{([^*]+)}/", $detail_pattern, $child)){
 												$detail_pattern=substr($detail_pattern,0,strpos($detail_pattern,'{'));
 												// Nếu có chỉ định đối tượng con cụ thể dạng childelement-nth
 												if(strpos($child[1],'-')){
-													$el=explode('-',$child[1]);
+													$el = explode('-',$child[1]);
 													foreach($html_detail->find($detail_pattern) as $element)
 													{
 														if($element_delete){
@@ -343,7 +341,7 @@ if($cmd=='feed' and $temps = $nv_Request->get_typed_array( 'temps', 'post', '' )
 				$sourcetext=(isset($item['sourcetext']) and $item['sourcetext'])?nv_htmlspecialchars(str_replace('\'','"',strip_tags($item['sourcetext']))):'';
 				$sourceid=(isset($item['sourceid']) and $item['sourceid'])?$item['sourceid']:0;
 				
-				$homeimgfile=(isset($item['homeimgfile']) and $item['homeimgfile'])?$item['homeimgfile']:'';
+				$homeimgfile=( isset($item['homeimgfile']) and $item['homeimgfile'] ) ? $item['homeimgfile'] : '';
 				
 				if (!empty($homeimgfile)and nv_is_url($homeimgfile))
 				{

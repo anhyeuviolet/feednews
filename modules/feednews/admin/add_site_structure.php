@@ -51,7 +51,10 @@ if($cmd){
 	$host = $nv_Request->get_string( 'host', 'post' );
 	$url = $nv_Request->get_string( 'url', 'post' );
 	$extra = $nv_Request->get_string( 'extra', 'post' );
-	$count = $nv_Request->get_string( 'count', 'post' );
+	$count = $nv_Request->get_int( 'count', 'post', 1 );
+	if( $count == 0){
+		$count = 1;
+	}
 	$get_image = $nv_Request->get_int( 'get_image', 'post' );
 	$image_pattern = $nv_Request->get_string( 'image_pattern', 'post' );
 	$image_content_left = $nv_Request->get_string( 'image_content_left', 'post' );
@@ -156,7 +159,6 @@ while( $cat = $cat_id->fetch() )
 	$xtpl->assign( 'CAT', $cat );
 	$xtpl->parse( 'main.list_cat' );
 }
-
 
 while( $source = $source_id->fetch() )
 {
